@@ -1,0 +1,1459 @@
+{% extends "Automate_v2.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+
+<!-- Custom fonts for this template-->
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" type="text/css">
+
+<!-- Custom styles for this page -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="{{ url_for('static', filename='css/admin.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/template.css') }}" rel="stylesheet">
+
+<style>
+
+li.error {
+  color: red;
+}
+
+li.info {
+  color: orange;
+}
+li.success {
+  color: green;
+}
+</style>
+
+<div id="content-wrapper" class="d-flex flex-column">
+<div class="row">
+  <!-- <div class="column" style="background-color:#ccc;">
+   <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+  </div> -->
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="rolesname" id="roles" class="form-control" onchange="check();">
+      <option value="option0">Select Category</option>
+      <option value="deprovision">Quick Provision</option>
+      <option value="bulk">Bulk deprovision</option>
+<!--      <option value="unified">On Premis Provision</option>-->
+<!--      <option value="ucaas">On Cloud Provision</option>-->
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="itemname" id="items" class="form-control" onchange="case_select()" style="display: none;">
+      <option value="item">Select Task</option>
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="casename" id="cases" class="form-control" style="display: none;">
+      <option value="item">Select Case</option>
+    </select>
+  </div>
+</div>
+    <div id="content">
+
+        <div class="container-fluid">
+
+            <div class="content-page-main">
+                <div class="page-heading text-left">
+                    <br>
+                    <p>Deprovision</p>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+              {% if messages %}
+
+                 <ul class=flashes>
+                     {% for category,message in messages %}
+    <span class="{{ category }}"><h4>{{ message | safe }}</h4></span>
+
+                     {% endfor %}
+                </ul>
+
+              {% endif %}
+            {% endwith %}
+                <h4 style="color: rgb(0, 0, blue);">
+            <a href = "{{ url_for('create.get_cucm_user_data', userid=user_id) }}">{{ FinalReport | safe }}</a></h4>
+                </div>
+                <div class="form-main">
+                    <form action="" method="post" class="form" role="form" id="myForm">
+                        {{ form.csrf_token }}
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                {{ wtf.form_field(form.user_id, class='form-control', placeholder='User Id') }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                {{ wtf.form_field(form.name_first, class='form-control', placeholder='First Name', readonly=true) }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {{ wtf.form_field(form.name_last, class='form-control', placeholder='Last Name',readonly=true) }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {{ wtf.form_field(form.email, class='form-control', placeholder='Email Address', readonly=true) }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {{ wtf.form_field(form.location, class='form-control', placeholder='Location', readonly=true) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                {{ wtf.form_field(form.user_profile, class='form-control', readonly= true) }}
+                            </div>
+                            <div id="hide_profile">
+                                {{ wtf.form_field(form.user_profile_hidden, class='form-control', disabled=true) }}
+                            </div>
+                        </div>
+
+
+
+                        <div id="hidden">
+                        <!-- <div class="row">
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.cucm_check, class='form-check-input') }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.skype_check, class='form-check-input') }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.msteams_check, class='form-check-input') }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.webex_check, class='form-check-input') }}
+                            </div>
+                        </div> -->
+
+he
+                        <div class="row" id="hidden3">
+                            <div class="form-group col-md-3" id="hidden8">
+                                {{ wtf.form_field(form.extension, class='form-control', placeholder='Extension', readonly=true) }}
+                            </div>
+                            <div class="form-group col-md-3" id="hidden9">
+                                {{ wtf.form_field(form.device_profile, class='form-control', placeholder='Device Profile', readonly=true) }}
+                            </div>
+                            <div class="form-group col-md-3" id="hidden10">
+                                {{ wtf.form_field(form.phone, class='form-control', placeholder='Phone', readonly=true) }}
+                            </div>
+
+                            <div class="form-group col-md-3" id="hidden1">
+
+                                {{ wtf.form_field(form.phonelinedialer, class='form-control') }}
+                            </div>
+                        </div>
+
+                        <div id="hidden4">
+                        <div class="col-md-12 text-lg mb-3 mt-2"> <strong>Calling Privilege</strong> </div>
+                        <div class="row">
+                            <div class="fform-check form-group col-md-3">
+                                {{ wtf.form_field(form.internal_check, class='form-check-input' ) }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.local_check, class='form-check-input') }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.national_check, class='form-check-input' ) }}
+                            </div>
+                            <div class="form-check form-group col-md-3">
+                                {{ wtf.form_field(form.international_check, class='form-check-input') }}
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-12 text-lg mb-3 mt-2"> <strong>Features Enabled</strong> </div>
+                        <div class="row">
+                            <!-- <div class="form-check form-group col-md-2">
+                                {{ form.check_phone(class_="form-check-input") }}
+                                {{ form.check_phone.label}}
+                                <div class="phone-field" style="display: none;">
+                                    <label>MAC</label>
+                                    <input type="string" name="Mac" class="form-control" id="" placeholder="Phone" >
+                                </div>
+                            </div> -->
+                            <div class="form-check form-group col-md-3">
+                                <!-- {{ wtf.form_field(form.check_im_presence, class='form-check-input') }} -->
+                                {{ form.enterprise_voice_check(class_="form-check-input") }}
+                                {{ form.enterprise_voice_check.label}}
+                            </div>
+
+                            <div class="form-check form-group col-md-3">
+
+                                <div class="ev-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheckev1">
+                                    <label class="form-check-label" for="defaultCheckev1">
+                                        CUCM
+                                      </label>
+                                </div>
+                                <div class="ev1-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheckev2">
+                                    <label class="form-check-label" for="defaultCheckev2">
+                                        MS Teams
+                                      </label>
+                                </div>
+                                <div class="ev2-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheckev3">
+                                    <label class="form-check-label" for="defaultCheckev3">
+                                        WebEx Teams
+                                      </label>
+                                </div>
+                            </div>
+                                <!-- <div class="row"> -->
+                                <div class="form-check form-group col-md-3">
+                                <!-- <div style="float: right;"> -->
+                                    <!-- {{ form.check_phone(class_="form-check-input") }}
+                                    {{ form.check_phone.label}} -->
+                                    <div class="ipphone-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheckipphone">
+                                        <label class="form-check-label" for="defaultCheckipphone">
+                                            IP Phone
+                                          </label>
+                                    </div>
+                                    <!-- <div class="phone-field" style="display: none; " >
+                                        <label>MAC</label>
+                                        <input type="string" name="Mac" class="form-control" id="" placeholder="Phone" >
+                                    </div> -->
+
+                                    <div class="jab-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheckjab1">
+                                    <label class="form-check-label" for="defaultCheckjab1">
+                                        Jabber
+                                      </label>
+                                </div>
+
+                                <div class="em-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheckem1">
+                                    <label class="form-check-label" for="defaultCheckem1">
+                                        Extension Mobility
+                                      </label>
+                                </div>
+
+                                <div class="snr-field" style="display: none;">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultChecksnr1">
+                                    <label class="form-check-label" for="defaultChecksnr1">
+                                            Single Number Reach
+                                      </label>
+                                </div>
+                                <!-- </div> -->
+                            </div>
+                        <!-- </div> -->
+
+                        <div class="form-check form-group col-md-3">
+                            <!-- <div style="float: right;"> -->
+                                <div class="phone-field" style="display: none; " >
+                                    <label>MAC</label>
+                                    <input type="string" name="mac" class="form-control" id="" placeholder="IP Phone" >
+                                </div>
+                            <div class="phone-field" style="display: none; " >
+                                    <label>Destination</label>
+                                    <input type="string" name="destination" class="form-control" id="destination" placeholder="destination" >
+                                </div>
+                        </div>
+
+
+                            </div>
+                            <br>
+                            <div class="row">
+
+                                <div class="form-check form-group col-md-3">
+                                    <!-- {{ wtf.form_field(form.check_im_presence, class='form-check-input') }} -->
+                                    {{ form.check_im_presence(class_="form-check-input") }}
+                                    {{ form.check_im_presence.label}}
+                                    <div class="im-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                                        <label class="form-check-label" for="defaultCheck1">
+                                            Skype
+                                          </label>
+                                    </div>
+                                    <div class="im1-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
+                                        <label class="form-check-label" for="defaultCheck2">
+                                            Jabber
+                                          </label>
+                                    </div>
+                                    <div class="im2-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
+                                        <label class="form-check-label" for="defaultCheck3">
+                                            MS Teams
+                                          </label>
+                                    </div>
+                                    <div class="im3-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
+                                        <label class="form-check-label" for="defaultCheck4">
+                                            WebEx Teams
+                                          </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-group col-md-3">
+                                    <!-- {{ wtf.form_field(form.check_im_presence, class='form-check-input') }} -->
+                                    {{ form.check_meeting(class_="form-check-input") }}
+                                    {{ form.check_meeting.label}}
+                                    <div class="meeting-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck5">
+                                        <label class="form-check-label" for="defaultCheck5">
+                                            WebEx Meetings
+                                          </label>
+                                    </div>
+                                    <div class="meeting1-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck6">
+                                        <label class="form-check-label" for="defaultCheck6">
+                                            MS Teams
+                                          </label>
+                                    </div>
+                                    <div class="meeting2-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck7">
+                                        <label class="form-check-label" for="defaultCheck7">
+                                            Skype Meetings
+                                          </label>
+                                    </div>
+                                    <div class="meeting3-field" style="display: none;">
+                                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck8">
+                                        <label class="form-check-label" for="defaultCheck8">
+                                            Zoom Meetings
+                                          </label>
+                                    </div>
+
+                                </div>
+
+
+
+                                    <div class="form-check form-group col-md-2">
+                                        <!-- {{ wtf.form_field(form.check_im_presence, class='form-check-input') }} -->
+                                        {{ form.check_voicemail(class_="form-check-input") }}
+                                        {{ form.check_voicemail.label}}
+                                        <div class="vm-field" style="display: none;">
+                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheckvm1">
+                                            <label class="form-check-label" for="defaultCheckvm1">
+                                                CUC
+                                              </label>
+                                        </div>
+                                        <div class="vm1-field" style="display: none;">
+                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheckvm2">
+                                            <label class="form-check-label" for="defaultCheckvm2">
+                                                Exchange
+                                              </label>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+                        </div>
+
+
+
+                        </div>
+
+                        </div>
+                    </div>
+                        <button type="submit" class="btn btn-main" id="submitBtn">Submit</button>
+                        <!-- <button type="button" id="submitBtn">Submit Form</button> -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<!-- Page level plugins -->
+
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+
+
+<script>
+<!--    $("#drop1").on('change', function() {-->
+<!--    var text = $('#drop1 :selected').text();-->
+    function opendrop(text){
+    console.log(text)
+    if (text === "Executive"){
+        $("#hidden1").hide();
+        $("#hidden").show();
+        $("#hidden3").show();
+        $("#hidden4").show();
+
+        $("#hidden9").show();
+        $("#hidden10").show();
+        $("#hidden1").show();
+        $("#hidden1").hide();
+        $("#hidden").show();
+        $("#hidden1").show();
+        $("#hidden3").show();
+        $("#hidden4").show();
+        $("#pmodel").val("Cisco 7962");
+        // $("#pmodel").prop( "disabled", true );
+        $("#phones");
+        // $("#proto" ).prop( "disabled", true );
+        $('#cucm_c').prop('disabled', false);
+        $('#cucm_c').prop('checked', false);
+        $('#skype_c').prop('disabled', false);
+        $('#skype_c').prop('checked', false);
+        $('#msteams_c').prop('disabled', false);
+        $('#msteams_c').prop('checked', false);
+        $('#webex_c').prop('disabled', false);
+        $('#webex_c').prop('checked', false);
+
+        $('#defaultCheckipphone').prop('disabled', false);
+        $('#defaultCheckipphone').prop('checked', true);
+        $('#check_em').prop('disabled', false);
+        $('#check_em').prop('checked', false);
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', false);
+        $('#check_sn').prop('disabled', true);
+        $('#check_sn').prop('checked', false);
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', false);
+        $('#check_sc').prop('disabled', false);
+        $('#check_sc').prop('checked', false);
+        $('#check_ms').prop('disabled', false);
+        $('#check_ms').prop('checked', false);
+        $('#check_webex').prop('disabled', false);
+        $('#check_webex').prop('checked', false);
+        // $('#defaultCheckipphone').prop('checked', true);
+        $(".phone-field").show();
+        $('#check_em').prop('checked', true);
+        $('#check_vm').prop('checked', true);
+        // $('#check_sn').prop('disabled', false);
+        // $('#check_sn').prop('checked', true);
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', true);
+        $(".im-field").show();
+        $(".im1-field").show();
+        $(".im2-field").show();
+        $(".im3-field").show();
+        $('#check_sc').prop('disabled', true);
+        $('#check_ms').prop('disabled', true);
+        $('#check_webex').prop('disabled', true);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', false);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', false);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', false);
+        $('#international_c').prop('disabled', false);
+        $('#international_c').prop('checked', false);
+
+        $('#cucm_c').prop('disabled', true);
+        $('#cucm_c').prop('checked', false);
+        $('#skype_c').prop('disabled', true);
+        $('#skype_c').prop('checked', false);
+        $('#msteams_c').prop('disabled', true);
+        $('#msteams_c').prop('checked', false);
+        $('#webex_c').prop('disabled', true);
+        $('#webex_c').prop('checked', false);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', true);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', true);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', true);
+        $('#international_c').prop('disabled', false);
+        $('#international_c').prop('checked', true);
+
+        $('#cucm_c').prop('disabled', false);
+        $('#cucm_c').prop('checked', true);
+        $('#msteams_c').prop('disabled', false);
+        $('#msteams_c').prop('checked', true);
+
+        $('#defaultCheck1').prop('disabled', true);
+        $('#defaultCheck1').prop('checked', false);
+        $('#defaultCheck2').prop('disabled', true);
+        $('#defaultCheck2').prop('checked', false);
+        $('#defaultCheck3').prop('disabled', false);
+        $('#defaultCheck3').prop('checked', true);
+        $('#defaultCheck4').prop('disabled', true);
+        $('#defaultCheck4').prop('checked', false);
+
+        $('#check_meet').prop('disabled', false);
+        $('#check_meet').prop('checked', true);
+        $(".meeting-field").show();
+        $(".meeting1-field").show();
+        $(".meeting2-field").show();
+        $(".meeting3-field").show();
+        $('#defaultCheck5').prop('disabled', true);
+        $('#defaultCheck5').prop('checked', false);
+        $('#defaultCheck6').prop('disabled', false);
+        $('#defaultCheck6').prop('checked', true);
+        $('#defaultCheck7').prop('disabled', true);
+        $('#defaultCheck7').prop('checked', false);
+        $('#defaultCheck8').prop('disabled', true);
+        $('#defaultCheck8').prop('checked', false);
+
+        $('#entr-voice').prop('disabled', false);
+        $('#entr-voice').prop('checked', true);
+        $(".ev-field").show();
+        $('#defaultCheckev1').prop('disabled', false);
+        $('#defaultCheckev1').prop('checked', true);
+        $(".ev1-field").show();
+        $('#defaultCheckev2').prop('disabled', true);
+        $('#defaultCheckev2').prop('checked', false);
+        $(".ev2-field").show();
+        $('#defaultCheckev3').prop('disabled', true);
+        $('#defaultCheckev3').prop('checked', false);
+        // $(".ev3-field").show();
+
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', true);
+        $(".vm-field").show();
+        $('#defaultCheckvm1').prop('disabled', false);
+        $('#defaultCheckvm1').prop('checked', true);
+        $(".vm1-field").show();
+        $('#defaultCheckvm2').prop('disabled', true);
+        $('#defaultCheckvm2').prop('checked', false);
+
+        // $(".ip-field").show();
+        $(".jab-field").show();
+        $(".em-field").show();
+        $(".snr-field").show();
+        // $('#defaultCheckip1').prop('checked', true);
+        // $('#defaultCheckip1').prop('disabled', false);
+
+        $('#defaultCheckjab1').prop('checked', false);
+        $('#defaultCheckjab1').prop('disabled', true);
+
+        $('#defaultCheckem1').prop('checked', true);
+        $('#defaultCheckem1').prop('disabled', false);
+
+        $('#defaultChecksnr1').prop('checked', false);
+        $('#defaultChecksnr1').prop('disabled', true);
+
+        $(".ipphone-field").show();
+
+        return;
+    }
+
+    else if (text === "Knowledge Worker"){
+
+        $("#hidden").show();
+
+        // $("#hidden3").show();
+        // $("#hidden1").hide();
+        // $("#hidden1").show();
+        // $("#hidden8").show();
+        // $("#hidden9").show();
+        // $("#hidden10").show();
+        $("#hidden4").show();
+
+        $("#hidden3").show();
+        $("#hidden8").show();
+        $("#hidden1").hide();
+        $("#hidden1").hide();
+        $("#hidden9").hide();
+        $("#hidden10").hide();
+        $("#pmodel").val("Cisco 7961");
+        // $("#pmodel").prop( "disabled", true );
+        $("#phones")
+        // $("#proto" ).prop( "disabled", true );
+        $('#cucm_c').prop('disabled', false);
+        $('#cucm_c').prop('checked', true);
+        $('#skype_c').prop('disabled', true);
+        $('#skype_c').prop('checked', false);
+        $('#msteams_c').prop('disabled', true);
+        $('#msteams_c').prop('checked', false);
+        $('#webex_c').prop('disabled', true);
+        $('#webex_c').prop('checked', false);
+
+        $('#defaultCheckipphone').prop('disabled', true);
+        $('#defaultCheckipphone').prop('checked', false);
+        $('#check_em').prop('disabled', true);
+        $('#check_em').prop('checked', false);
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', false);
+        $('#check_sn').prop('disabled', false);
+        $('#check_sn').prop('checked', false);
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', false);
+        $('#check_sc').prop('disabled', false);
+        $('#check_sc').prop('checked', false);
+        $('#check_ms').prop('disabled', false);
+        $('#check_ms').prop('checked', false);
+        $('#check_webex').prop('disabled', false);
+        $('#check_webex').prop('checked', false);
+        // $('#defaultCheckipphone').prop('checked', true);
+        $(".phone-field").hide();
+        // $('#check_em').prop('checked', true);
+        $('#check_vm').prop('checked', true);
+        $('#check_sn').prop('disabled', true);
+        // $('#check_im').prop('disabled', true);
+        $('#check_sc').prop('disabled', true);
+        $('#check_ms').prop('disabled', true);
+        $('#check_webex').prop('disabled', true);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', false);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', false);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', false);
+        $('#international_c').prop('disabled', false);
+        $('#international_c').prop('checked', false);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', true);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', true);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', true);
+        $('#international_c').prop('disabled', true);
+        $('#international_c').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+
+        $(".im-field").hide();
+        $(".im1-field").hide();
+        $(".im2-field").hide();
+        $(".im3-field").hide();
+        $('#defaultCheck3').prop('disabled', true);
+        $('#defaultCheck3').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+        $(".meeting-field").hide();
+        $(".meeting1-field").hide();
+        $(".meeting2-field").hide();
+        $(".meeting3-field").hide();
+
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', true);
+        $('#defaultCheck1').prop('disabled', true);
+        $('#defaultCheck1').prop('checked', false);
+        $('#defaultCheck2').prop('disabled', false);
+        $('#defaultCheck2').prop('checked', true);
+        $('#defaultCheck3').prop('disabled', true);
+        $('#defaultCheck3').prop('checked', false);
+        $('#defaultCheck4').prop('disabled', true);
+        $('#defaultCheck4').prop('checked', false);
+        $('#defaultCheck8').prop('disabled', true);
+        $('#defaultCheck8').prop('checked', false);
+        $(".im-field").show();
+        $(".im1-field").show();
+        $(".im2-field").show();
+        $(".im3-field").show();
+
+        $('#defaultCheckem1').prop('disabled', true);
+        $('#defaultCheckem1').prop('checked', false);
+
+
+        $('#entr-voice').prop('disabled', false);
+        $('#entr-voice').prop('checked', true);
+        $(".ev-field").show();
+        $('#defaultCheckev1').prop('disabled', false);
+        $('#defaultCheckev1').prop('checked', true);
+        $(".ev1-field").show();
+        $('#defaultCheckev2').prop('disabled', true);
+        $('#defaultCheckev2').prop('checked', false);
+        $(".ev2-field").show();
+        $('#defaultCheckev3').prop('disabled', true);
+        $('#defaultCheckev3').prop('checked', false);
+        // $(".ev3-field").show();
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', true);
+        $(".vm-field").show();
+        $('#defaultCheckvm1').prop('disabled', false);
+        $('#defaultCheckvm1').prop('checked', true);
+        $(".vm1-field").show();
+        $('#defaultCheckvm2').prop('disabled', true);
+        $('#defaultCheckvm2').prop('checked', false);
+
+        // $(".ip-field").show();
+        $(".jab-field").show();
+        $(".em-field").show();
+        $(".snr-field").show();
+        // $('#defaultCheckip1').prop('checked', true);
+        // $('#defaultCheckip1').prop('disabled', false);
+
+        $('#defaultCheckjab1').prop('checked', true);
+        $('#defaultCheckjab1').prop('disabled', false);
+
+        $('#defaultCheckem1').prop('checked', false);
+        $('#defaultCheckem1').prop('disabled', true);
+
+        $('#defaultChecksnr1').prop('checked', false);
+        $('#defaultChecksnr1').prop('disabled', true);
+
+        $(".ipphone-field").show();
+
+        return;
+    }
+
+    else if (text === "Sales"){
+
+         $("#hidden").show();
+        $("#hidden3").show();
+        $("#hidden8").show();
+        $("#hidden1").hide();
+        $("#hidden1").show();
+        $("#hidden9").show();
+        $("#hidden10").show();
+        $(".meeting3-field").show();
+
+        $('#defaultCheck8').prop('disabled', false);
+        $('#defaultCheck8').prop('checked', true);
+        $("#hidden4").show();
+        $('#cucm_c').prop('disabled', true);
+        $('#cucm_c').prop('checked', false);
+        $('#skype_c').prop('disabled', true);
+        $('#skype_c').prop('checked', false);
+        $('#msteams_c').prop('checked', true);
+        $('#msteams_c').prop('disabled', false);
+        $('#webex_c').prop('disabled', true);
+        $('#webex_c').prop('checked', false);
+
+        $('#defaultCheckipphone').prop('disabled', false);
+        $('#defaultCheckipphone').prop('checked', false);
+        $('#check_em').prop('disabled', true);
+        $('#check_em').prop('checked', false);
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', false);
+        $('#check_sn').prop('disabled', false);
+        $('#check_sn').prop('checked', false);
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', false);
+        $('#check_sc').prop('disabled', false);
+        $('#check_sc').prop('checked', false);
+        $('#check_ms').prop('disabled', false);
+        $('#check_ms').prop('checked', false);
+        $('#check_webex').prop('disabled', false);
+        $('#check_webex').prop('checked', false);
+        $('#defaultCheckipphone').prop('checked', false);
+        $('#defaultCheckipphone').prop('disabled', true)
+        $(".phone-field").hide();
+        // $('#check_em').prop('checked', true);
+        $('#check_vm').prop('checked', false);
+        $('#check_vm').prop('disabled', true);
+        $('#check_sn').prop('disabled', true);
+        // $('#check_im').prop('disabled', true);
+        $('#check_sc').prop('disabled', true);
+        $('#check_ms').prop('disabled', true);
+        $('#check_webex').prop('disabled', true);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', true);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', true);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', true);
+        $('#international_c').prop('disabled', false);
+        $('#international_c').prop('checked', true);
+
+        // $('#internal_c').prop('disabled', false);
+        // $('#internal_c').prop('checked', true);
+        // $('#local_c').prop('disabled', false);
+        // $('#local_c').prop('checked', true);
+        // $('#national_c').prop('disabled', false);
+        // $('#national_c').prop('checked', true);
+        // $('#international_c').prop('disabled', true);
+        // $('#international_c').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+
+        $(".im-field").hide();
+        $(".im1-field").hide();
+        $(".im2-field").hide();
+        $(".im3-field").hide();
+        $('#defaultCheck3').prop('disabled', true);
+        $('#defaultCheck3').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+        $(".meeting-field").hide();
+        $(".meeting1-field").hide();
+        $(".meeting2-field").hide();
+
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', true);
+        $('#defaultCheck1').prop('disabled', true);
+        $('#defaultCheck1').prop('checked', false);
+        $('#defaultCheck2').prop('disabled', true);
+        $('#defaultCheck2').prop('checked', false);
+        $('#defaultCheck3').prop('disabled', false);
+        $('#defaultCheck3').prop('checked', true);
+        $('#defaultCheck4').prop('disabled', true);
+        $('#defaultCheck4').prop('checked', false);
+        $(".im-field").show();
+        $(".im1-field").show();
+        $(".im2-field").show();
+        $(".im3-field").show();
+        $('#check_meet').prop('disabled', false);
+        $('#check_meet').prop('checked', true);
+        $(".meeting-field").show();
+        $(".meeting1-field").show();
+        $(".meeting2-field").show();
+        $('#defaultCheck5').prop('disabled', true);
+        $('#defaultCheck5').prop('checked', false);
+        $('#defaultCheck6').prop('disabled', false);
+        $('#defaultCheck6').prop('checked', true);
+        $('#defaultCheck7').prop('disabled', true);
+        $('#defaultCheck7').prop('checked', false);
+
+        $('#entr-voice').prop('disabled', false);
+        $('#entr-voice').prop('checked', true);
+        $(".ev-field").show();
+        $('#defaultCheckev1').prop('disabled', false);
+        $('#defaultCheckev1').prop('checked', true);
+        $(".ev1-field").show();
+        $('#defaultCheckev2').prop('disabled', true);
+        $('#defaultCheckev2').prop('checked', false);
+        $(".ev2-field").show();
+        $('#defaultCheckev3').prop('disabled', true);
+        $('#defaultCheckev3').prop('checked', false);
+        // $(".ev3-field").show();
+        // $('#check_vm').prop('disabled', false);
+        // $('#check_vm').prop('checked', true);
+        $(".vm-field").hide();
+        $('#defaultCheckvm1').prop('disabled', true);
+        $('#defaultCheckvm1').prop('checked', false);
+        $(".vm1-field").hide();
+        $('#defaultCheckvm2').prop('disabled', true);
+        $('#defaultCheckvm2').prop('checked', false);
+
+        // $(".ip-field").show();
+        $(".jab-field").show();
+        $(".em-field").show();
+        $(".snr-field").show();
+        // $('#defaultCheckip1').prop('checked', true);
+        // $('#defaultCheckip1').prop('disabled', false);
+
+        $('#defaultCheckjab1').prop('checked', false);
+        $('#defaultCheckjab1').prop('disabled', true);
+
+        $('#defaultCheckem1').prop('checked', true);
+        $('#defaultCheckem1').prop('disabled', false);
+
+        $('#defaultChecksnr1').prop('checked', false);
+        $('#defaultChecksnr1').prop('disabled', true);
+
+        $(".ipphone-field").show();
+
+        $("#pmodel").val("Cisco 7961");
+        // $("#pmodel").prop( "disabled", true );
+        $("#phones")
+        // $("#proto" ).prop( "disabled", true );
+
+        return;
+    }
+
+    else if (text === "Account Manager"){
+        // $("#hidden1").hide();
+        // $("#hidden").show();
+        // $("#hidden1").show();
+        // $("#hidden3").hide();
+        // $("#hidden4").show();
+
+        $("#hidden").show();
+        $("#hidden3").show();
+        $("#hidden8").show();
+        $("#hidden1").hide();
+        $("#hidden1").show();
+        $("#hidden9").show();
+        $("#hidden10").show();
+        $("#hidden4").show();
+
+        $('#cucm_c').prop('disabled', false);
+        $('#cucm_c').prop('checked', true);
+        $('#skype_c').prop('disabled', true);
+        $('#skype_c').prop('checked', false);
+        $('#msteams_c').prop('checked', true);
+        $('#msteams_c').prop('disabled', false);
+        $('#webex_c').prop('disabled', true);
+        $('#webex_c').prop('checked', false);
+
+        $('#defaultCheckipphone').prop('disabled', false);
+        $('#defaultCheckipphone').prop('checked', false);
+        $('#check_em').prop('disabled', false);
+        $('#check_em').prop('checked', true);
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', false);
+        $('#check_sn').prop('disabled', false);
+        $('#check_sn').prop('checked', false);
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', false);
+        $('#check_sc').prop('disabled', false);
+        $('#check_sc').prop('checked', false);
+        $('#check_ms').prop('disabled', false);
+        $('#check_ms').prop('checked', false);
+        $('#check_webex').prop('disabled', false);
+        $('#check_webex').prop('checked', false);
+        $('#defaultCheckipphone').prop('checked', false);
+        $('#defaultCheckipphone').prop('disabled', true)
+        $(".phone-field").hide();
+        // $('#check_em').prop('checked', true);
+        $('#check_vm').prop('checked', false);
+        $('#check_vm').prop('disabled', true);
+        $('#check_sn').prop('disabled', true);
+        // $('#check_im').prop('disabled', true);
+        $('#check_sc').prop('disabled', true);
+        $('#check_ms').prop('disabled', true);
+        $('#check_webex').prop('disabled', true);
+
+        $('#internal_c').prop('disabled', false);
+        $('#internal_c').prop('checked', true);
+        $('#local_c').prop('disabled', false);
+        $('#local_c').prop('checked', true);
+        $('#national_c').prop('disabled', false);
+        $('#national_c').prop('checked', true);
+        $('#international_c').prop('disabled', false);
+        $('#international_c').prop('checked', true);
+
+        // $('#internal_c').prop('disabled', false);
+        // $('#internal_c').prop('checked', true);
+        // $('#local_c').prop('disabled', false);
+        // $('#local_c').prop('checked', true);
+        // $('#national_c').prop('disabled', false);
+        // $('#national_c').prop('checked', true);
+        // $('#international_c').prop('disabled', true);
+        // $('#international_c').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+
+        $(".im-field").hide();
+        $(".im1-field").hide();
+        $(".im2-field").hide();
+        $(".im3-field").hide();
+        $('#defaultCheck3').prop('disabled', true);
+        $('#defaultCheck3').prop('checked', false);
+        $('#check_meet').prop('disabled', true);
+        $('#check_meet').prop('checked', false);
+        $(".meeting-field").hide();
+        $(".meeting1-field").hide();
+        $(".meeting2-field").hide();
+
+        $('#check_im').prop('disabled', false);
+        $('#check_im').prop('checked', true);
+        $('#defaultCheck1').prop('disabled', true);
+        $('#defaultCheck1').prop('checked', false);
+        $('#defaultCheck2').prop('disabled', true);
+        $('#defaultCheck2').prop('checked', false);
+        $('#defaultCheck3').prop('disabled', false);
+        $('#defaultCheck3').prop('checked', true);
+        $('#defaultCheck4').prop('disabled', true);
+        $('#defaultCheck4').prop('checked', false);
+        $(".im-field").show();
+        $(".im1-field").show();
+        $(".im2-field").show();
+        $(".im3-field").show();
+        $('#check_meet').prop('disabled', false);
+        $('#check_meet').prop('checked', true);
+        $(".meeting-field").show();
+        $(".meeting1-field").show();
+        $(".meeting2-field").show();
+        $(".meeting3-field").show();
+        $('#defaultCheck5').prop('disabled', true);
+        $('#defaultCheck5').prop('checked', false);
+        $('#defaultCheck6').prop('disabled', false);
+        $('#defaultCheck6').prop('checked', true);
+        $('#defaultCheck7').prop('disabled', true);
+        $('#defaultCheck7').prop('checked', false);
+        $('#defaultCheck8').prop('disabled', false);
+        $('#defaultCheck8').prop('checked', true);
+
+        $('#entr-voice').prop('disabled', false);
+        $('#entr-voice').prop('checked', true);
+        $(".ev-field").show();
+        $('#defaultCheckev1').prop('disabled', false);
+        $('#defaultCheckev1').prop('checked', true);
+        $(".ev1-field").show();
+        $('#defaultCheckev2').prop('disabled', true);
+        $('#defaultCheckev2').prop('checked', false);
+        $(".ev2-field").show();
+        $('#defaultCheckev3').prop('disabled', true);
+        $('#defaultCheckev3').prop('checked', false);
+        // $(".ev3-field").show();
+        $('#check_vm').prop('disabled', false);
+        $('#check_vm').prop('checked', true);
+        $(".vm-field").show();
+        $('#defaultCheckvm1').prop('disabled', false);
+        $('#defaultCheckvm1').prop('checked', true);
+        $(".vm1-field").show();
+        $('#defaultCheckvm2').prop('disabled', true);
+        $('#defaultCheckvm2').prop('checked', false);
+
+        // $(".ip-field").show();
+        $(".jab-field").show();
+        $(".em-field").show();
+        $(".snr-field").show();
+        // $('#defaultCheckip1').prop('checked', true);
+        // $('#defaultCheckip1').prop('disabled', false);
+
+        $('#defaultCheckjab1').prop('checked', false);
+        $('#defaultCheckjab1').prop('disabled', true);
+
+        $('#defaultCheckem1').prop('checked', true);
+        $('#defaultCheckem1').prop('disabled', false);
+
+        $('#defaultChecksnr1').prop('checked', false);
+        $('#defaultChecksnr1').prop('disabled', true);
+
+        $(".ipphone-field").show();
+
+        $("#pmodel").val("Cisco 7961");
+        // $("#pmodel").prop( "disabled", true );
+        $("#phones")
+        // $("#proto" ).prop( "disabled", true );
+        return;
+    }
+    }
+</script>
+
+<script>
+ $("#defaultCheckipphone").click(function() {
+    if($(this).is(":checked")) {
+       $(".phone-field").show();
+    }
+    else {
+       $(".phone-field").hide();
+    }
+});
+</script>
+
+<script>
+    $("#check_im").click(function() {
+       if($(this).is(":checked")) {
+          $(".im-field").show();
+          $(".im1-field").show();
+          $(".im2-field").show();
+          $(".im3-field").show();
+       }
+       else {
+          $(".im-field").hide();
+          $(".im1-field").hide();
+          $(".im2-field").hide();
+          $(".im3-field").hide();
+       }
+   });
+   </script>
+
+<script>
+    $("#check_vm").click(function() {
+       if($(this).is(":checked")) {
+          $(".vm-field").show();
+          $(".vm1-field").show();
+       }
+       else {
+          $(".vm-field").hide();
+          $(".vm1-field").hide();
+       }
+   });
+   </script>
+
+<script>
+    $("#check_meet").click(function() {
+       if($(this).is(":checked")) {
+          $(".meeting-field").show();
+          $(".meeting1-field").show();
+          $(".meeting2-field").show();
+       }
+       else {
+          $(".meeting-field").hide();
+          $(".meeting1-field").hide();
+          $(".meeting2-field").hide();
+       }
+   });
+   </script>
+
+<script>
+    $("#entr-voice").click(function() {
+       if($(this).is(":checked")) {
+          $(".ev-field").show();
+          $(".ev1-field").show();
+          $(".ev2-field").show();
+          $(".ipphone-field").show();
+
+          $(".phone-field").show();
+          $(".jab-field").show();
+          $(".em-field").show();
+          $(".snr-field").show();
+       }
+       else {
+          $(".ev-field").hide();
+          $(".ev1-field").hide();
+          $(".ev2-field").hide();
+          $(".ipphone-field").hide();
+          $(".phone-field").hide();
+          $(".jab-field").hide();
+          $(".em-field").hide();
+          $(".snr-field").hide();
+       }
+   });
+   </script>
+
+<script>
+    $("#defaultCheckev1").click(function() {
+       if($(this).is(":checked")) {
+
+          $(".ipphone-field").show();
+          $(".phone-field").show();
+          $(".jab-field").show();
+          $(".em-field").show();
+          $(".snr-field").show();
+       }
+       else {
+
+          $(".ipphone-field").hide();
+          $(".phone-field").hide();
+          $(".jab-field").hide();
+          $(".em-field").hide();
+          $(".snr-field").hide();
+       }
+   });
+   </script>
+
+<!-- <script>
+    $("#ev-field").click(function() {
+       if($(this).is(":checked")) {
+          $(".ip-field").show();
+          $(".jab-field").show();
+       }
+       else {
+          $(".ip-field").hide();
+          $(".jab-field").hide();
+       }
+   });
+   </script> -->
+
+<!-- <script>
+    $(document).ready(function(){
+        $("#submitBtn").click(function(){
+            $("#myForm").submit(); // Submit the form
+            // $("#hidden").show();
+
+        });
+    });
+
+</script> -->
+
+<script type="text/Javascript">
+    $('#myForm').submit(function(){
+        $(this).show();
+    })
+</script>
+<!-- <script type="text/javascript">
+    $(document).ready(function(){
+      //Hide div w/id extra
+    //    $(".test").css("display","none");
+
+        // Add onclick handler to checkbox w/id checkme
+       $("#submitBtn").click(function(){
+
+        //show the hidden div
+
+        $("#hidden").show();
+
+      });
+
+    });
+</script> -->
+
+<!-- <script>
+    $("#submitBtn").click(function() {
+  $("#hidden").toggle();
+
+});
+</script> -->
+<script>
+
+$(document).ready(function() {
+    $("#hidden").hide();
+});
+
+</script>
+
+<script>
+
+    $(document).ready(function() {
+        $("#hidden1").hide();
+    });
+
+</script>
+<script>
+
+        $(document).ready(function() {
+            $("#hidden1").hide();
+        });
+
+</script>
+
+<script>
+
+    $(document).ready(function() {
+        $("#hidden3").hide();
+    });
+
+</script>
+
+<script>
+
+    $(document).ready(function() {
+        $("#hidden4").hide();
+    });
+
+</script>
+<!-- <script>
+    $(document).ready(function(){
+        $("#cucm_c").click(function (){
+            if ($("#cucm_c").prop("checked")){
+                $("#hidden").show();
+            }else{
+
+                $("#hidden").hide();
+            }
+        });
+    });
+</script> -->
+
+<!-- <script>
+    jQuery(document).ready(function($) {
+
+        $('#cucm_c').change(function(){
+                    $(this).next()[ this.checked ? 'show' : 'hide']();
+        }).change();
+    });
+    </script> -->
+
+  <script type="text/javascript">
+   $("#roles").change(function () {
+            if ($('#roles').val()=="unified") {
+                $('#items').empty();
+                $('#items').append('<option value="dum1">Select Option</option>');
+                $('#items').append('<option value="cucm">Unified CM</option>');
+                $('#items').append('<option value="Unity">Unity Connection</option>');
+                $('#items').append('<option value="Skype">Skype For Buisness</option>');
+            }
+
+            else if ($('#roles').val()=="ucaas") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">Select Server</option>');
+                $('#items').append('<option value="webex">Webex Teams</option>');
+                $('#items').append('<option value="msteams">Microsoft Teams</option>');
+            }
+
+            else if ($('#roles').val()=="quick") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">No Selection</option>');
+                window.location.href = "{{ url_for('quick.quick_custom_provision') }}";
+            }
+
+            else if ($('#roles').val()=="bulk") {
+                $('#items').empty();
+                $('#items').append('<option value="dum6">Select option</option>');
+                $('#items').append('<option value="Microsoft">Microsoft</option>');
+                $('#items').append('<option value="Cisco">Cisco</option>');
+            }
+
+        });
+
+    $("#items").change(function () {
+             if ($('#items').val()=="cucm") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="addlocaluser">Add Local User</option>');
+                $('#cases').append('<option value="synchronizead">Synchronize AD</option>');
+                $('#cases').append('<option value="addphone">Add Phone</option>');
+                $('#cases').append('<option value="addudp">Add User Device Profile</option>');
+                $('#cases').append('<option value="enablem">Enable Extension Mobility</option>');
+            }
+            else if ($('#items').val()=="Unity") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="enablevoicemail">Enable Voice Mail</option>');
+                $('#cases').append('<option value="resetvoicemail">Reset Voice Mail PIN</option>');
+            }
+            else if ($('#items').val()=="Skype") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="addADuser">Add AD User</option>');
+                $('#cases').append('<option value="sfbprovision">Single User SFB Provision</option>');
+            }
+            else if ($('#items').val()=="webex") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="devices">Devices</option>');
+                $('#cases').append('<option value="users">Users</option>');
+                $('#cases').append('<option value="teams">Teams</option>');
+                $('#cases').append('<option value="rooms">Rooms</option>');
+                $('#cases').append('<option value="messages">Messages</option>');
+                $('#cases').append('<option value="webhooks">WebHooks</option>');
+            }
+            else if ($('#items').val()=="msteams") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="devices">Enable msteams</option>');
+                $('#cases').append('<option value="users">Enable msteams meetings</option>');
+            }
+			else if ($('#items').val()=="Microsoft") {
+                $('#cases').empty();
+                 window.location.href = "{{ url_for('prov.bulk_prov_sfb') }}";
+            }
+            else if ($('#items').val()=="Cisco") {
+                $('#cases').empty();
+                 window.location.href = "{{ url_for('bulk.custom_bulk_provision') }}";
+            }
+         });
+
+        $("#cases").change(function () {
+            var end = this.value;
+            if (end=="addlocaluser") {
+                window.location.href = "{{ url_for('create.cucm_add_user') }}";
+            }
+
+            else if (end=="synchronizead") {
+                window.location.href = "{{ url_for('macdcucm.directory_sync') }}";
+            }
+            else if (end=="addphone") {
+                window.location.href = "{{ url_for('macdcucm.add_phone_cucm') }}";
+            }
+            else if (end=="addudp") {
+                window.location.href = "{{ url_for('macdcucm.add_device_profile') }}";
+            }
+            else if (end=="enablem") {
+                window.location.href = "{{ url_for('macdcucm.check_enable_em') }}";
+            }
+            else if (end=="enablevoicemail") {
+                window.location.href = "{{ url_for('unityconn.enable_voice_mail') }}";
+            }
+            else if (end=="resetvoicemail") {
+                window.location.href = "{{ url_for('unityconn.reset_voice_mail_pin') }}";
+            }
+            else if (end=="addADuser") {
+                window.location.href = "{{ url_for('create.add_ad_user')}}";
+            }
+            else if (end=="sfbprovision") {
+                window.location.href = "{{ url_for('prov.single_user_sfb_provision')}}";
+            }
+            else if (end=="upgradetoteams") {
+                window.location.href = "{{ url_for('teams.msteams_upgrade_toteams') }}";
+            }
+            else if (end=="meetingmigration") {
+                window.location.href = "{{ url_for('teams.msteams_meeting_migration') }}";
+            }
+            else if (end=="meetingmigrationstatus") {
+                window.location.href = "{{ url_for('teams.msteams_meeting_migration_status') }}";
+            }
+        });
+</script>
+
+<script>
+  function check() {
+    var dropdown = document.getElementById("roles");
+    var current_value = dropdown.options[dropdown.selectedIndex].value;
+
+    if (current_value == "unified" || current_value == "ucaas" || current_value == "bulk" ) {
+        document.getElementById("items").style.display = "block";
+        document.getElementById("cases").style.display = "none";
+    }
+    else {
+        document.getElementById("items").style.display = "none";
+        document.getElementById("cases").style.display = "none";
+    }
+}
+
+function case_select() {
+    var item = document.getElementById("items");
+    var role = document.getElementById("roles");
+    var current_item = item.options[item.selectedIndex].value;
+    var current_role = role.options[role.selectedIndex].value;
+
+    if (current_role=="bulk" && current_item){
+        document.getElementById("cases").style.display = "none";
+    }
+    else if (current_item) {
+        document.getElementById("cases").style.display = "block";
+    }
+    else if (current_role=="quick"){
+        document.getElementById("cases").style.display = "none";
+    }
+}
+
+</script>
+<link href="{{ url_for('static', filename='css/autofill.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='jquery/jquery-ui.js') }}" ></script>
+<script>
+    $("#userid").autocomplete({
+                minimumInputLength: 3,
+                source: function (request, response) {
+                var id = $("input[name='user_id']").val().trim();
+                    $.ajax({
+                        url: '/provisioning/get_user',
+                        data: {
+                            'searchValue': id
+                        },
+                        dataType: "json",
+                        type: "GET",
+                        success: function (data) {
+                            if (data != null) {
+                                var list = new Array();
+                                for(var key in data) {
+                                    list.push({ label: key, value: data[key] });
+                                }
+                                response($.map(list, function (item) {
+                                    return { value: item.value };
+                                }))
+                            }
+                        },
+                        error: function(data)
+                           {
+                           alert(data['responseJSON']['message'])
+                 }
+                    });
+                }
+            });
+</script>
+<script type="text/javascript">
+   $("#userid").change(function () {
+         var id = $("input[name='user_id']").val();
+         $.ajax({
+                url: '/deprovision/get_details',
+                data: {
+                    'userid': id
+                },
+                dataType: "json",
+                type: "GET",
+                success: function (data) {
+                        $("#fname").val(data['fname']);
+<!--                        $('#fname').attr('readonly','true');-->
+<!--                        $("#fname").prop( "disabled", true );-->
+                        $("#lname").val(data['lname']);
+<!--                        $( "#lname" ).prop( "disabled", true );-->
+                        $("#email").val(data['email']);
+<!--                        $( "#email" ).prop( "disabled", true );-->
+                        $("#location").val(data['location']);
+                        $("#extension").val(data['extension']);
+                        $("#device_profile").val(data['profileName']);
+                        $("#Phones").val(data['device']);
+<!--                        $( "#location" ).prop( "disabled", true );-->
+                        var options = document.getElementById("drop1")
+	                    name =data['title']
+	                    $("#user_profile_hidden").val(data['title'])
+                        for(i = 0; i < options.length; i++){
+                            if($.trim(options[i].text).toLowerCase() == $.trim(name).toLowerCase()){
+    	                        options[i].selected = true;
+    	                        opendrop(options[i].text);
+                                break;
+    }
+}
+                },
+                error: function(data)
+                           {
+                           alert(data['responseJSON']['message'])
+                 }
+                });
+                });
+</Script>
+<script type="text/javascript">
+   $('#hide_profile').hide();
+</script>
+{% endblock %}

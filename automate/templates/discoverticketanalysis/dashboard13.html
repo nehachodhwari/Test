@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+  .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      grid-gap: 20px;
+      background-color: #ccc;
+      padding: 10px;
+    }
+    
+    .grid-container > div {
+      background-color: #A9A9A9;
+      text-align: center;
+      padding: 40px 40px 40px 40px;
+      font-size: 15px;
+    }
+    /* h3 {text-align: center;} */
+</style>
+<script>
+  window.addEventListener('load', function() {
+   $.ajax({
+       url: "/tktanalysis/servicenowchartnew",
+       data: {
+
+       },
+       type: 'GET',
+       complete: ticketbypriority,
+       error: function(data)
+                           {
+                           alert(data['responseJSON']['message'])
+                 }
+    });
+ 
+    function ticketbypriority(data, status) {
+        var output = JSON.parse(data.responseText);
+        GetTicketByPriority(output);
+                                }
+    var canvasP = document.getElementById("chartContainer");
+    var ctx = canvasP.getContext("2d");
+    function GetTicketByPriority(values) {
+           var myChart= new Chart(ctx, {
+                type: 'bar',
+                
+                data: {
+                    labels: ["P1","P2","P3","P4","P5"],
+                    datasets: [
+                    {
+                        label: 'UCaaS',
+                        type: 'bar',
+                        backgroundColor: '#59ADD0', 
+                        stack: 'Stack 0',
+                        data: [values['UCaas-p1'],values['UCaas-p2'],values['UCaas-p3'],values['UCaas-p4'],values['UCaas-p5']]
+                        
+                    },
+                    {
+                        label: 'UC',
+                        type: 'bar',
+                        backgroundColor: '#82EEFD',
+                        stack: 'Stack 0',
+                        data: [values['UC-p1'],values['UC-p2'],values['UC-p3'],values['UC-p4'],values['UC-p5']]
+                        
+                    },
+                                         
+                    ]
+                  
+                },
+                options: {
+                  scales:  {
+                                xAxes: [{ stacked: true }],
+                                yAxes: [{ scaleLabel: {
+        display: true,
+        labelString: 'Total No. of Tickets'
+      } }]
+                                
+                                
+                           },
+                    title: {
+                        display: true,
+                        text: 'Total No. of tickets by category'
+                    },
+                    
+                }
+            });
+            canvasP.onclick = function(evt) {
+            var activePoints = myChart.getElementsAtEvent(evt);
+                if (activePoints[0]) {
+                    var chartData = activePoints[0]['_chart'].config.data;
+                    var idx = activePoints[0]['_index'];
+                    var label = chartData.labels[idx];
+                    window.open("/tktanalysis/tickets_by_priority/"+label,'_self');
+                    // if(label == "P1")
+                    //     window.open("/p1",'_self');
+                    // else if(label == "P2")
+                    //     window.open("/p2",'_self');
+                    // else if(label == "P3")
+                    //     window.open("/p3",'_self');
+                    // else if(label == "P4")
+                    //     window.open("/p4",'_self');
+                    // else if(label == "P5")
+                    //     window.open("/p5",'_self');    
+                }
+                };
+        }
+});
+
+window.addEventListener('load', function() {
+selected_value=document.getElementById("timeframe").value
+$(function () {
+        $("#btnWebxteamsView").click(function () {
+         
+            var  selected_value= $('#timeframe').val();   
+            jQuery.ajax({
+                type: "GET",
+                url: "/tktanalysis/time_range",
+                data: {
+                  'selected_value': selected_value
+                                  
+                },
+                success: function(response){
+                },
+                error: function(error){
+                },
+                complete: Test,
+                error: function(data)
+                           {
+                           alert(data['responseJSON']['message'])
+                 }
+            });
+        });
+
+    });
+   $.ajax({
+       url: "/tktanalysis/time_range",
+       data:{
+        'selected_value':selected_value
+
+       } ,
+       type: 'GET',
+       success: function(response){
+			},
+			error: function(error){
+			},
+       complete: Test,
+       error: function(data)
+                           {
+                           alert(data['responseJSON']['message'])
+                 }
+    });
+    function Test(data, status) {
+        var output = JSON.parse(data.responseText);
+        GetTicketByState(output);
+                                }
+    var canvasP1 = document.getElementById("chartContainer1");
+    var ctx1 = canvasP1.getContext("2d");
+    function GetTicketByState(values) {
+    var myChart= new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ["All","Closed","Resolved","Opened"],
+      datasets: [
+        {
+          label: 'UcaaS',
+          type: 'bar',
+          backgroundColor: "#3e95cd",
+          data: [values['all_tickets_ucaas'] , values['closed_all_ucaas'] ,values['resolved_all_ucaas'] , values['opened_all_ucaas']]
+        },
+        {
+          label: 'Unified Communications',
+          type: 'bar',
+          backgroundColor: "#8e5ea2",
+          data: [values['all_tickets_uc'] , values['closed_all_uc'] ,values['resolved_all_uc'] , values['opened_all_uc']]
+        },
+      ]
+    },
+    options: {
+      
+      title: {
+        display: true,
+        text: 'Total No. of tickets by state'
+      },
+      responsive: true,
+      scales:  {
+                xAxes: [{ stacked: true,
+                  barPercentage:0.2,
+                  ticks: {
+                            autoSkip: false
+                         },
+                  beginAtZero: true 
+                        }],
+                yAxes: [{ stacked: true,
+                  scaleLabel: {
+                                display: true,
+                                labelString: 'Total No. of Tickets'
+                              } 
+                        }]                             
+                           },
+                    title: {
+                        display: true,
+                        text: 'Total No. of tickets by state'
+                    },
+                    
+                }
+});
+
+    }
+    
+});
+
+window.addEventListener('load', function() {
+   $.ajax({
+       url: "/tktanalysis/servicenowmttrchart",
+       data: {
+
+       },
+       type: 'GET',
+       complete: Test
+    });
+ 
+    function Test(data, status) {
+        var output = JSON.parse(data.responseText);
+        GetMTTR(output);
+                                }
+    var canvasP = document.getElementById("chartContainer2");
+    var ctx = canvasP.getContext("2d");
+    function GetMTTR(values) {
+           var myChart= new Chart(ctx, {
+                type: 'line',
+                
+                data: {
+                    labels: ["P1","P2","P3","P4","P5"],
+                    datasets: [
+                    {
+                        label: 'MTTR-(UC+UCaaS))',
+                        backgroundColor: '#3e95cd',  
+                        borderColor: '#3e95cd',                  
+                        data: [values['Mttr_all-p1'],values['Mttr_all-p2'],values['Mttr_all-p3'],values['Mttr_all-p4'],values['Mttr_all-p5']],
+                        fill: false
+                    },
+                    {
+                        label: 'MTTR-Unified Communications',
+                        backgroundColor: '#CC5801',  
+                        borderColor: '#CC5801',                  
+                        data: [values['Mttr_UC-p1'],values['Mttr_UC-p2'],values['Mttr_UC-p3'],values['Mttr_UC-p4'],values['Mttr_UC-p5']],
+                        fill: false
+                    },
+                    {
+                        label: 'MTTR-UCaaS',
+                        backgroundColor: '#FCAE1E',
+                        borderColor: '#FCAE1E',
+                        data: [values['Mttr_UCaas-p1'],values['Mttr_UCaas-p2'],values['Mttr_UCaas-p3'],values['Mttr_UCaas-p4'],values['Mttr_UCaas-p5']],                                            
+                        fill: false
+                    }
+                    ]
+                  
+                },
+                options: {
+                  scales:  {
+                                xAxes: [{  }],
+                                yAxes: [{ scaleLabel: {
+        display: true,
+        labelString: 'Values in Hrs'
+      } }]
+                                
+                                
+                           },
+                    title: {
+                        display: true,
+                        text: 'MTTR by category'
+                    },
+                    
+                }
+            });
+            
+        }
+});
+
+
+  </script>
+
+
+</head>
+<body>
+
+  {% extends "discoverticketanalysis/Automate_v3.html" %}
+  {% block content %}
+<div class="container">
+<div class="row">
+ 
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Ticket By Category</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="{{ url_for('ticket_analysis.servicenow_incident_form') }}">View All Tickets</a>
+            <!-- <a class="dropdown-item" href="#">Another action</a> -->
+            <!-- <div class="dropdown-divider"></div> -->
+            <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div style="height: 54px;">
+        
+      </div>
+      <div>
+        
+      </div>
+      <div class="card-body">
+        <div class="chart-area">
+          <canvas id="chartContainer" width="400" height="250" style="border: 1px solid #000000;"></canvas>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Ticket By State</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="#"></a>
+            <!-- <a class="dropdown-item" href="#">Another action</a> -->
+            <!-- <div class="dropdown-divider"></div> -->
+            <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5" style="max-width:100%">
+        <div class="form-group">
+          <select name="selectTimeframe" id="timeframe">
+            <option value="">Select Timeframe</option>
+            <option value="Today" selected>Today</option>
+            <option value="Week">Week</option>
+            <option value="Month">Month</option>
+          </select>
+          <button type="button" id="btnWebxteamsView" class="btn btn-primary" style="border-radius:50px;">Go</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-area">
+            <canvas id="chartContainer1" width="400" height="250" style="border: 1px solid #000000;"></canvas>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+          <!-- Card Header - Dropdown -->
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">MTTR</h6>
+            <div class="dropdown no-arrow">
+              <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">Dropdown Header:</div>
+                <!-- <a class="dropdown-item" href="/servicenow">View All Tickets</a> -->
+                <!-- <a class="dropdown-item" href="#">Another action</a> -->
+                <!-- <div class="dropdown-divider"></div> -->
+                <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+              </div>
+            </div>
+          </div>
+          <!-- Card Body -->
+          <div style="height: 54px;">
+        
+          </div>
+          <div>
+            
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+                <canvas id="chartContainer2" width="400" height="250" style="border: 1px solid #000000;"></canvas>
+            </div>
+          </div>
+         
+        </div>
+      </div>
+
+  
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/canvasjs.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+<link href="{{ url_for('static', filename='css/jquery.dataTables.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/buttons.dataTables.min.css') }}" rel="stylesheet">
+</head>
+<body>
+
+  {% extends "discoverticketanalysis/Automate_v3.html" %}
+  {% block content %}
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column" style="text-align:center">
+
+    <!-- Main Content -->
+    <div id="content" >
+      <div class="col-sm-12">
+            <div class="server-table-main">
+            <div class="right-table">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <h2 style="text-align: center;">ServiceNow Incidents</h2>
+                    <thead>
+                      <tr>
+                        <th>Incident Number</th>
+                        <th>Description</th>            
+                        <th>Priority</th>
+                        <th>state</th>
+                        <th>Opened By</th>
+                        <th>Assigned to</th>
+                        <th>Assigned Group</th>
+                        <th>Opened</th>
+                        <th>Closed</th>
+                        <th>Resoloved</th>                     
+                        <th>Category</th>
+                        <th>Subcategory</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                      <tr>
+                        <th>Name</th>
+                        <th>Directory Number</th>
+                        <th>Phone</th>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+                      {% for Value in incidents_Details %}
+                        {% if Value['assignment_group']=="" and Value['assigned_to']=="" %}
+                          {% for Value3 in state %}
+                            {% if Value['incident_state'] == Value3 %}
+                              {% for Value4 in assigned_to %}
+                                {% if Value['opened_by']['value'] == Value4 %}
+                                  <tr>                     
+                                    <td><a href="{{ url_for( 'ticket_analysis.get_incident_notes', sys_id=Value['sys_id'] ) }}">{{Value['number'] | safe}}</a></td>
+                                    <td>{{Value['short_description'] | safe}}</td>
+                                    <td>{{Value['priority'] | safe}}</td>
+                                    <td>{{state[Value3] | safe}}</td>
+                                    <td>{{assigned_to[Value4] | safe}}</td>
+                                    <td>{{Value['assigned_to'] | safe}}</td>
+                                    <td>{{Value['assignment_group'] | safe}}</td>
+                                    <td>{{Value['opened_at'] | safe}}</td>
+                                    <td>{{Value['closed_at'] | safe}}</td>
+                                    <td>{{Value['resolved_at'] | safe}}</td>
+                                    <td>{{Value['category'] | safe}}</td>
+                                    <td>{{Value['subcategory'] | safe}}</td>
+                                  </tr> 
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
+                        {% elif Value['assignment_group']!="" and Value['assigned_to'] =="" %}                
+                          {% for Value1 in assigned_group %}
+                            {% if Value['assignment_group']['value']== Value1 %}
+                              {% for Value3 in state %}
+                                {% if Value['incident_state'] == Value3 %}
+                                  {% for Value4 in assigned_to %}
+                                    {% if Value['opened_by']['value'] == Value4 %}
+                                      <tr>                     
+                                        <td><a href="{{ url_for( 'ticket_analysis.get_incident_notes', sys_id=Value['sys_id'] ) }}">{{Value['number'] | safe}}</a></td>
+                                        <td>{{Value['short_description'] | safe}}</td>
+                                        <td>{{Value['priority'] | safe}}</td>
+                                        <td>{{state[Value3] | safe}}</td>
+                                        <td>{{assigned_to[Value4] | safe}}</td>
+                                        <td>{{Value['assigned_to'] | safe}}</td>
+                                        <td>{{assigned_group[Value1] | safe}}</td>
+                                        <td>{{Value['opened_at'] | safe}}</td>
+                                        <td>{{Value['closed_at'] | safe}}</td>
+                                        <td>{{Value['resolved_at'] | safe}}</td>
+                                        <td>{{Value['category'] | safe}}</td>
+                                        <td>{{Value['subcategory'] | safe}}</td>
+                                      </tr> 
+                                    {% endif %}
+                                  {% endfor %} 
+                                {% endif %}
+                              {% endfor %} 
+                            {% endif %}
+                          {% endfor %}
+                        {% elif Value['assignment_group']=="" and Value['assigned_to']!="" %}                
+                          {% for Value2 in assigned_to %}
+                            {% if Value['assigned_to']['value']== Value2 %}
+                              {% for Value3 in state %}
+                                {% if Value['incident_state'] == Value3 %}
+                                  {% for Value4 in assigned_to %}
+                                    {% if Value['opened_by']['value'] == Value4 %}
+                                      <tr>                     
+                                        <td><a href="{{ url_for( 'ticket_analysis.get_incident_notes', sys_id=Value['sys_id'] ) }}">{{Value['number'] | safe}}</a></td>
+                                        <td>{{Value['short_description'] | safe}}</td>
+                                        <td>{{Value['priority'] | safe}}</td>
+                                        <td>{{state[Value3] | safe}}</td>
+                                        <td>{{assigned_to[Value4] | safe}}</td>
+                                        <td>{{assigned_to[Value2] | safe}}</td>
+                                        <td>{{Value['assignment_group'] | safe}}</td>
+                                        <td>{{Value['opened_at'] | safe}}</td>
+                                        <td>{{Value['closed_at'] | safe}}</td>
+                                        <td>{{Value['resolved_at'] | safe}}</td>
+                                        <td>{{Value['category'] | safe}}</td>
+                                        <td>{{Value['subcategory'] | safe}}</td>
+                                      </tr>  
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}                  
+                        {% elif Value['assignment_group']!= "" and Value['assigned_to'] != "" %}
+                          {% for Value1 in assigned_group %}
+                            {% if Value['assignment_group']['value']== Value1 %}
+                              {% for Value2 in assigned_to %}
+                                {% if Value['assigned_to']['value']== Value2 %}
+                                  {% for Value3 in state %}
+                                    {% if Value['incident_state'] == Value3 %}
+                                      {% for Value4 in assigned_to %}
+                                        {% if Value['opened_by']['value'] == Value4 %}
+                                          <tr>                     
+                                            <td><a href="{{ url_for( 'ticket_analysis.get_incident_notes', sys_id=Value['sys_id'] ) }}">{{Value['number'] | safe}}</a></td>
+                                            <td>{{Value['short_description'] | safe}}</td>
+                                            <td>{{Value['priority'] | safe}}</td>
+                                            <td>{{state[Value3] | safe}}</td>
+                                            <td>{{assigned_to[Value4] | safe}}</td>
+                                            <td>{{assigned_to[Value2] | safe}}</td>
+                                            <td>{{assigned_group[Value1] | safe}}</td>
+                                            <td>{{Value['opened_at'] | safe}}</td>
+                                            <td>{{Value['closed_at'] | safe}}</td>
+                                            <td>{{Value['resolved_at'] | safe}}</td>
+                                            <td>{{Value['category'] | safe}}</td>
+                                            <td>{{Value['subcategory'] | safe}}</td>
+                                          </tr>
+                                        {% endif %}
+                                      {% endfor %}  
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}  
+                      {% endfor %}   
+                                    
+                      </tbody>
+                  </table>
+              
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+    <!-- End of Main Content -->
+
+  </div>
+  <!-- End of Content Wrapper -->
+
+{% endblock %}
+
+</body>
+</html>

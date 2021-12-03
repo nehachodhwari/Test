@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<title>Rendezvous</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{{ url_for('static', filename='css/googleaapis.css') }}" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<!-- <link rel="stylesheet" href="css/style2.css"> -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style5.css') }}">
+	<script type="text/javascript" src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+   <script type="text/javascript">
+		$( document ).ready(function() {
+
+
+		$('.header').on('click', '.search-toggle', function(e) {
+		  var selector = $(this).data('selector');
+		
+		  $(selector).toggleClass('show').find('.search-input').focus();
+		  $(this).toggleClass('active');
+		
+		  e.preventDefault();
+		});
+		});
+	</script>
+  </head>
+  <body>		
+		<div class="wrapper d-flex align-items-stretch">
+			<nav id="sidebar">
+				<div class="p-4 pt-5" style="padding:1.5rem !important;">
+		  		<a href="/" class="img logo w3-border mb-5" style="background-image: url(static/images/Automate.png);width:60%"></a>
+	        <ul class="list-unstyled components mb-5">
+			<li>
+				<a href="#macdprovisioning" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">MACD/Provisioning</a>
+	            <ul class="collapse list-unstyled" id="macdprovisioning">
+				
+				<li>
+					<a href="/provisioningform">Quick Custom Provision User</a>
+				</li>
+				
+				<li>
+					<a href="/bulkprovisioningform">Bulk User Provisioning</a>
+				</li>
+	          <li>
+	            <a href="#ucSeversSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Unified Communicatiobn </a>
+	            <ul class="collapse list-unstyled" id="ucSeversSubmenu">
+                	
+					<li>
+						<a href="/macd_cucm">Cisco Unified CM's</a>
+					</li>
+
+					<li>
+						<a href="/macd_cuc">Cisco Unity Connection</a>
+					</li>
+					
+					
+					
+					<li>
+						<a href="{{ url_for('main.msMacdSfb')}}">Skype for Business</a>
+					</li>
+
+	            </ul>
+	          </li>	                   
+			  <li>
+	            <a href="#ucaasSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">UCaaS </a>
+	            <ul class="collapse list-unstyled"" id="ucaasSubmenu">
+                
+					<li>
+						<a href="/macd_webexteams">Cisco WebEx Teams</a>
+					</li>
+					
+					<li>
+						<a href="/macd_msteams">Microsoft Teams</a>
+					</li>
+								
+	            </ul>
+			  </li>	 
+			  <li>
+	            <a href="#gatewaySubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Gateways</a>
+	            <ul class="collapse list-unstyled"" id="gatewaySubmenu">
+					
+					<li>
+						<a href="#">Cisco Expressways/ Gateways/ CUBE</a>
+					</li>
+					
+					<li>
+						<a href="#">Microsoft Gateways</a>
+					</li>
+								
+	            </ul>
+	          </li>	         
+	        </ul>
+			
+			</li>
+			
+			
+			
+			<li>
+				<a href="#">Self Heal</a>
+			</li>
+			
+			
+			<li>
+				<a href="#">Service Requests</a>
+			</li>
+			<li>
+				<a href="#">Audit Logs</a>
+			</li>
+			</ul>	
+	      </div>
+    	</nav>
+
+        <!-- Page Content  -->
+		  <div id="content" class="p-4 p-md-5">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">			
+			  <div class="container-fluid">
+				<div class="row">
+					<div class="col-xs-12 col-lg-12">
+						<button type="button" id="sidebarCollapse" class="btn btn-primary">
+						  <i class="fa fa-bars"></i>
+						  <span class="sr-only">Toggle Menu</span>
+						</button>
+						<a href="{{url_for('main.automate_home') }}"><img src="{{ url_for('static', filename='img/R_letscollab-trbg.png') }}" align= "center-left" style="height:63px; width: 150px" ></a>						
+					</div>
+				</div>												
+				<div>
+					<header id="header-1" class="header">  
+						<nav class="header-nav">
+							<div class="search-button">
+								<a href="#" class="search-toggle" data-selector="#header-1"></a>
+							</div>							
+							<ul class="menu">
+				
+							  <li><a href="#">Home</a></li>
+							  <li><a href="#">About</a></li>
+							  <li><a href="#">Support</a></li>
+							  <li><a href="#">Settings</a></li>
+							  <li><a href="#">Logged In</a></li>
+							</ul>
+							<form action="" class="search-box">
+								<input type="text" class="text search-input" placeholder="Type here to search and hit enter..." />
+							</form>	
+						</nav>
+					</header>							
+				</div>
+			  </div>
+			</nav>	
+
+			{% block content %}
+
+  		{% endblock %}
+			
+		  </div>
+		</div>
+  
+
+  <footer class="site-footer">
+	<div class="container-fluid">
+				<img src="{{ url_for('static', filename='img/company_logo.png') }}" style="height:40px" align= right>
+				
+	</div>
+	</footer>
+	<script src="static/js/jquery.min.js"></script>
+	<script src="static/js/popper.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/main.js"></script>
+</body>
+</html>

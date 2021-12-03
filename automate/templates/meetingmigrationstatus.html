@@ -1,0 +1,129 @@
+{% extends "Automate_v2.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" type="text/css">
+
+<!-- Custom styles for this page -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="{{ url_for('static', filename='css/admin.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/template.css') }}" rel="stylesheet">
+<style>
+
+li.error {
+  color: red;
+}
+
+span.info {
+  color: orange;
+}
+span.success {
+  color: green;
+}
+</style>
+<div id="content-wrapper" class="d-flex flex-column">
+<div class="row">
+  <!-- <div class="column" style="background-color:#ccc;">
+   <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+  </div> -->
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="rolesname" id="roles" class="form-control" onchange="check();">
+      <option value="option0">Select Category</option>
+      <option value="utt">Upgrade To Teams</option>
+      <option value="mm">Meeting Migration</option>
+      <option value="mms">Meeting Migration Status</option>
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="itemname" id="items" class="form-control" onchange="case_select()" style="display: none;">
+      <option value="item">Select Task</option>
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="casename" id="cases" class="form-control" style="display: none;">
+      <option value="item">Select Case</option>
+    </select>
+  </div>
+</div>
+    <div id="content">
+        <br>
+<!--                    <h3 style="color:rgb(3, 168, 17)">{{ myresult }}</h3>-->
+        <hr>
+        <div class="container-fluid">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+              {% if messages %}
+
+                 <ul class=flashes style="padding-left: 0px;">
+                     {% for category,message in messages %}
+
+                     <span class="{{ category }}"><h4 style="text-align:left">{{ message | safe }}</h4></span>
+
+                     {% endfor %}
+                </ul>
+
+              {% endif %}
+            {% endwith %}
+            <div class="content-page-main">
+                <div class="page-heading text-left">
+                    <p>Meeting Migration Status</p>
+                </div>
+                <br>
+                {% cache 60*3, "meeting_migration_status" %}
+                <div class="form-main">
+                    <form action="{{ url_for('teams.msteams_meeting_migration_status') }}" method="post" class="form" role="form">
+                        {{ form.csrf_token }}
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                {{ wtf.form_field(form.user_id, class='form-control', placeholder='Enter User Id') }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-main">Submit</button>
+                    </form>
+                </div>
+                {% endcache %}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<!-- Page level plugins -->
+
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+
+<script type="text/javascript">
+   $("#roles").change(function () {
+            if ($('#roles').val()=="utt") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">No Selection</option>');
+                window.location.href = "{{ url_for('teams.msteams_upgrade_toteams') }}";
+            }
+
+            else if ($('#roles').val()=="mm") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">No Selection</option>');
+                window.location.href = "{{ url_for('teams.msteams_meeting_migration') }}";
+            }
+
+            else if ($('#roles').val()=="mms") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">No Selection</option>');
+               window.location.href = "{{ url_for('teams.msteams_meeting_migration_status') }}";
+            }
+
+        });
+
+</script>
+
+{% endblock %}

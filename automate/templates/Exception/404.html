@@ -1,0 +1,40 @@
+{% extends "Automate_v2.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" type="text/css">
+
+<!-- Custom styles for this page -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="{{ url_for('static', filename='css/admin.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/template.css') }}" rel="stylesheet">
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <div id="content">
+
+        <div class="container-fluid">
+
+            <div class="content-page-main">
+                <div class="page-heading text-center">
+                    <h1>Page Not Found(404)</h1>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<!-- Page level plugins -->
+
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+
+{% endblock %}

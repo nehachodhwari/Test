@@ -1,0 +1,268 @@
+{% extends "Automate_v2.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" type="text/css">
+
+<!-- Custom styles for this page -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="{{ url_for('static', filename='css/admin.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/template.css') }}" rel="stylesheet">
+<style>
+    li.error {
+  color: red;
+}
+
+span.info {
+  color: orange;
+}
+span.success {
+  color: green;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+<div id="content-wrapper" class="d-flex flex-column">
+<div class="row">
+  <!-- <div class="column" style="background-color:#ccc;">
+   <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+  </div> -->
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="rolesname" id="roles" class="form-control" onchange="check();">
+      <option value="option0">Select Category</option>
+      <option value="quick">Quick Provision</option>
+      <option value="bulk">Bulk Provision</option>
+      <option value="unified">On Premis Provision</option>
+      <option value="ucaas">On Cloud Provision</option>
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="itemname" id="items" class="form-control" onchange="case_select()" style="display: none;">
+      <option value="item">Select Task</option>
+    </select>
+  </div>
+  <div class="select-server col-sm-4">
+    </br>
+    <select name="casename" id="cases" class="form-control" style="display: none;">
+      <option value="item">Select Case</option>
+    </select>
+  </div>
+</div>
+    <div id="content">
+
+        <hr>
+        <div class="container-fluid">
+
+            <div class="content-page-main">
+                <div class="page-heading text-left">
+                    <p>User Details</p>
+
+
+                </div>
+                <div>
+                     {% if myresult %}
+                <table border = 1>
+            <br>
+    <hr>
+          {% for key, value in myresult.items() %}
+                    <tr>
+            <th>{{ key | safe }}</th>
+            <td>{{ value | safe }}</td>
+            </tr>
+          {% endfor %}
+
+        </table>
+                {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<!-- Page level plugins -->
+
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+
+<script type="text/javascript">
+   $("#roles").change(function () {
+            if ($('#roles').val()=="unified") {
+                $('#items').empty();
+                $('#items').append('<option value="dum1">Select Option</option>');
+                $('#items').append('<option value="cucm">Unified CM</option>');
+                $('#items').append('<option value="Unity">Unity Connection</option>');
+                $('#items').append('<option value="Skype">Skype For Buisness</option>');
+            }
+
+            else if ($('#roles').val()=="ucaas") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">Select Roles</option>');
+                $('#items').append('<option value="webex">Webex Teams</option>');
+                $('#items').append('<option value="msteams">Microsoft Teams</option>');
+            }
+
+            else if ($('#roles').val()=="quick") {
+                $('#items').empty();
+                $('#items').append('<option value="dum2">No Selection</option>');
+                window.location.href = "{{ url_for('quick.quick_custom_provision') }}";
+            }
+
+            else if ($('#roles').val()=="bulk") {
+                $('#items').empty();
+                $('#items').append('<option value="dum6">Select option</option>');
+                $('#items').append('<option value="Microsoft">Microsoft</option>');
+                $('#items').append('<option value="Cisco">Cisco</option>');
+            }
+
+        });
+
+    $("#items").change(function () {
+             if ($('#items').val()=="cucm") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="addlocaluser">Add Local User</option>');
+                $('#cases').append('<option value="synchronizead">Synchronize AD</option>');
+                $('#cases').append('<option value="addphone">Add Phone</option>');
+                $('#cases').append('<option value="addudp">Add User Device Profile</option>');
+                $('#cases').append('<option value="enablem">Enable Extension Mobility</option>');
+            }
+            else if ($('#items').val()=="Unity") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="enablevoicemail">Enable Voice Mail</option>');
+                $('#cases').append('<option value="resetvoicemail">Reset Voice Mail PIN</option>');
+            }
+            else if ($('#items').val()=="Skype") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="addADuser">Add AD User</option>');
+                $('#cases').append('<option value="sfbprovision">Single User SFB Provision</option>');
+            }
+            else if ($('#items').val()=="webex") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="devices">Devices</option>');
+                $('#cases').append('<option value="users">Users</option>');
+                $('#cases').append('<option value="teams">Teams</option>');
+                $('#cases').append('<option value="rooms">Rooms</option>');
+                $('#cases').append('<option value="messages">Messages</option>');
+                $('#cases').append('<option value="webhooks">WebHooks</option>');
+            }
+            else if ($('#items').val()=="msteams") {
+                $('#cases').empty();
+                $('#cases').append('<option value="dum1">Select Option</option>');
+                $('#cases').append('<option value="devices">Enable msteams</option>');
+                $('#cases').append('<option value="users">Enable msteams meetings</option>');
+            }
+            else if ($('#items').val()=="Microsoft") {
+                $('#cases').empty();
+                 window.location.href = "{{ url_for('prov.bulk_prov_sfb') }}";
+            }
+            else if ($('#items').val()=="Cisco") {
+                $('#cases').empty();
+                 window.location.href = "{{ url_for('prov.bulk_prov') }}";
+            }
+         });
+
+        $("#cases").change(function () {
+            var end = this.value;
+            if (end=="addlocaluser") {
+                window.location.href = "{{ url_for('macdcucm.cucm_End_User') }}";
+            }
+
+            else if (end=="synchronizead") {
+                window.location.href = "{{ url_for('macdcucm.directory_sync') }}";
+            }
+            else if (end=="addphone") {
+                window.location.href = "{{ url_for('macdcucm.add_phone_cucm') }}";
+            }
+            else if (end=="addudp") {
+                window.location.href = "{{ url_for('macdcucm.add_device_profile') }}";
+            }
+            else if (end=="enablem") {
+                window.location.href = "{{ url_for('macdcucm.check_enable_em') }}";
+            }
+            else if (end=="enablevoicemail") {
+                window.location.href = "{{ url_for('unityconn.enable_voice_mail') }}";
+            }
+            else if (end=="resetvoicemail") {
+                window.location.href = "{{ url_for('unityconn.reset_voice_mail_pin') }}";
+            }
+            else if (end=="addADuser") {
+                window.location.href = "{{ url_for('prov.add_ad_user')}}";
+            }
+            else if (end=="sfbprovision") {
+                window.location.href = "{{ url_for('prov.single_user_sfb_provision')}}";
+            }
+            else if (end=="upgradetoteams") {
+                window.location.href = "{{ url_for('teams.msteams_upgrade_toteams') }}";
+            }
+            else if (end=="meetingmigration") {
+                window.location.href = "{{ url_for('teams.msteams_meeting_migration') }}";
+            }
+            else if (end=="meetingmigrationstatus") {
+                window.location.href = "{{ url_for('teams.msteams_meeting_migration_status') }}";
+            }
+        });
+</script>
+
+<script>
+  function check() {
+    var dropdown = document.getElementById("roles");
+    var current_value = dropdown.options[dropdown.selectedIndex].value;
+
+    if (current_value == "unified" || current_value == "ucaas" || current_value == "bulk" ) {
+        document.getElementById("items").style.display = "block";
+        document.getElementById("cases").style.display = "none";
+    }
+    else {
+        document.getElementById("items").style.display = "none";
+        document.getElementById("cases").style.display = "none";
+    }
+}
+
+function case_select() {
+    var item = document.getElementById("items");
+    var role = document.getElementById("roles");
+    var current_item = item.options[item.selectedIndex].value;
+    var current_role = role.options[role.selectedIndex].value;
+
+    if (current_role=="bulk" && current_item){
+        document.getElementById("cases").style.display = "none";
+    }
+    else if (current_item) {
+        document.getElementById("cases").style.display = "block";
+    }
+    else if (current_role=="quick"){
+        document.getElementById("cases").style.display = "none";
+    }
+}
+
+</script>
+
+{% endblock %}

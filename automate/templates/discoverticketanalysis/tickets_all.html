@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+<link href="{{ url_for('static', filename='css/jquery.dataTables.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/buttons.dataTables.min.css') }}" rel="stylesheet">
+</head>
+<body>
+
+  {% extends "discoverticketanalysis/Automate_v3.html" %}
+  {% block content %}
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column" style="text-align:center">
+
+    <!-- Main Content -->
+    <div id="content" >
+      <div class="col-sm-12">
+            <div class="server-table-main">
+            <div class="right-table">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <h2 style="text-align: center;">ServiceNow Incidents</h2>
+                    <thead>
+                      <tr>
+                        <th width="10%">Incident Number</th>
+                        <th width="10%">Description</th>
+                        <th width="5%">Priority</th>
+                        <th width="5%">state</th>
+                        <th width="10%">Opened By</th>
+                        <th width="10%">Assigned to</th>
+                        <th width="10%">Assigned Group</th>
+                        <th width="10%">Opened</th>
+                        <th width="10%">Closed</th>
+                        <th width="10%">Resoloved</th>
+                        <th width="10%">Category</th>
+                        <th width="10%">Subcategory</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                      <tr>
+                        <th>Name</th>
+                        <th>Directory Number</th>
+                        <th>Phone</th>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+                      {% for Value in incidents_data %}
+                          <tr>
+                              <td><a href="{{ url_for( 'ticket_analysis.get_incident_notes', sys_id=Value['sys_id'] ) }}">{{Value['number'] | safe }}</a></td>
+                            <td>{{Value['short_description'] | safe}}</td>
+                            <td>{{Value['priority'] | safe}}</td>
+                              <td>{{Value['incident_state'] | safe}}</td>
+                              <td>{{Value['opened_by']['name'] | safe}}</td>
+                            <td>{{Value['assigned_to']['name'] | safe}}</td>
+                            <td>{{Value['assignment_group']['name'] | safe}}</td>
+                            <td>{{Value['opened_at'] | safe}}</td>
+                            <td>{{Value['closed_at'] | safe}}</td>
+                            <td>{{Value['resolved_at'] | safe}}</td>
+                            <td>{{Value['category'] | safe}}</td>
+                            <td>{{Value['subcategory'] | safe}}</td>
+                          </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+    <!-- End of Main Content -->
+
+  </div>
+  <!-- End of Content Wrapper -->
+
+{% endblock %}
+
+</body>
+</html>

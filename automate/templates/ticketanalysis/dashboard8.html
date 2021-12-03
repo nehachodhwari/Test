@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+  .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      grid-gap: 20px;
+      background-color: #ccc;
+      padding: 10px;
+    }
+    
+    .grid-container > div {
+      background-color: #A9A9A9;
+      text-align: center;
+      padding: 40px 40px 40px 40px;
+      font-size: 15px;
+    }
+    /* h3 {text-align: center;} */
+</style>
+<script>
+  window.addEventListener('load', function() {
+  console.log('First listener');
+   $.ajax({
+       url: "/service_now_chart_new",
+       data: {
+
+       },
+       type: 'GET',
+       complete: Test
+    });
+ 
+    function Test(data, status) {
+        var output = JSON.parse(data.responseText);
+        GetKHIDashboardDetails(output);
+                                }
+    var canvasP = document.getElementById("chartContainer");
+    var ctx = canvasP.getContext("2d");
+    function GetKHIDashboardDetails(values) {
+           var myChart= new Chart(ctx, {
+                type: 'bar',
+                
+                data: {
+                    labels: ["P1","P2","P3","P4","P5"],
+                    datasets: [
+                    {
+                        label: 'MTTA',
+                        type: 'line', 
+                        backgroundColor: '#CC5801',  
+                        borderColor: '#CC5801',                  
+                        data: [2, 20, 10, 25,10],
+                        fill: false
+                    },
+                    {
+                        label: 'MTTR',
+                        type: 'line',
+                        backgroundColor: '#FCAE1E',
+                        borderColor: '#FCAE1E',
+                        data: [10, 25, 5, 20,2],                                            
+                        fill: false
+                    },    
+                    {
+                        label: 'UCaaS',
+                        type: 'bar',
+                        backgroundColor: '#59ADD0', // yellow#FAEBCC
+                        stack: 'Stack 0',
+                        data: [values['UCaas-p1'],values['UCaas-p2'],values['UCaas-p3'],values['UCaas-p4'],values['UCaas-p5']]
+                        
+                    },
+                    {
+                        label: 'UC',
+                        type: 'bar',
+                        backgroundColor: '#82EEFD', // green #D6E9C6
+                        stack: 'Stack 0',
+                        data: [values['UC-p1'],values['UC-p2'],values['UC-p3'],values['UC-p4'],values['UC-p5']]
+                        
+                    },
+                                         
+                    ]
+                  
+                },
+                options: {
+                  scales:  {
+                                xAxes: [{ stacked: true }]
+                                
+                           },
+                    title: {
+                        display: true,
+                        text: ''
+                    },
+                    
+                }
+            });
+            canvasP.onclick = function(evt) {
+            var activePoints = myChart.getElementsAtEvent(evt);
+                if (activePoints[0]) {
+                    var chartData = activePoints[0]['_chart'].config.data;
+                    var idx = activePoints[0]['_index'];
+                    var label = chartData.labels[idx];
+                    // var value = chartData.datasets[0].data[idx];
+                    if(label == "P1")
+                        window.open("/p1",'_self');
+                    else if(label == "P2")
+                        window.open("/p2",'_self');
+                    else if(label == "P3")
+                        window.open("/p3",'_self');
+                    else if(label == "P4")
+                        window.open("/p4",'_self');
+                    else if(label == "P5")
+                        window.open("/p5",'_self');    
+                }
+                };
+        }
+});
+  </script>
+
+
+</head>
+<body>
+
+  {% extends "Automate_v2.html" %}
+  {% block content %}
+<div class="container">
+<div class="row">
+ 
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Ticket Analysis</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="/servicenow">View All Tickets</a>
+            <!-- <a class="dropdown-item" href="#">Another action</a> -->
+            <!-- <div class="dropdown-divider"></div> -->
+            <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area">
+          <canvas id="chartContainer" style="border: 1px solid #000000;"></canvas>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+  <div class="column" style="background-color:#ddd; ">
+  <div class= "col-md-6" style="height: 280px; width: 100%;" ><h3 >Time Saved Using Automation</h3></div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- <div id="content-wrapper" class="d-flex flex-column"> -->
+    <!-- Main Content -->
+    <!-- <div id="content"> -->
+      <!-- Begin Page Content -->
+      <!-- <div class="container-fluid"> -->
+        <!-- Content Row -->
+        <!-- <div class="detail-page-main">         -->
+             <div class="col-sm-12">
+                <div class="server-table-main">    
+                    <div class="right-table" style="width: 70%;">
+                    <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <h2 style="text-align: center;">ServiceNow Incidents</h2>
+                        <thead>
+                        <tr>
+                            <th width="10%">Incident Number</th>
+                            <th width="10%">Description</th>            
+                            <th width="5%">Priority</th>
+                            <th width="5%">state</th>
+                            <th width="10%">Opened By</th>
+                            <th width="10%">Assigned to</th>
+                            <th width="10%">Assigned Group</th>
+                            <th width="10%">Opened</th>
+                            <th width="10%">Closed</th>
+                            <th width="10%">Resoloved</th>                     
+                            <th width="10%">Category</th>
+                            <th width="10%">Subcategory</th>
+                            </tr>
+                        </thead>
+                        <!-- <tfoot>
+                        <tr>
+                            <th>Name</th>
+                            <th>Directory Number</th>
+                            <th>Phone</th>
+                            </tr>
+                        </tfoot> -->
+                        <tbody>
+                        {% for Value in incident_data %}
+                            {% if Value['assignment_group']=="" and Value['assigned_to']=="" %}
+                            {% for Value3 in state %}
+                                {% if Value['incident_state'] == Value3 %}
+                                {% for Value4 in assigned_to %}
+                                    {% if Value['opened_by']['value'] == Value4 %}
+                                    <tr>                     
+                                        <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                        <td>{{Value['short_description'] | safe}}</td>
+                                        <td>{{Value['priority'] | safe}}</td>
+                                        <td>{{state[Value3] | safe}}</td>
+                                        <td>{{assigned_to[Value4] | safe}}</td>
+                                        <td>{{Value['assigned_to'] | safe}}</td>
+                                        <td>{{Value['assignment_group'] | safe}}</td>
+                                        <td>{{Value['opened_at'] | safe}}</td>
+                                        <td>{{Value['closed_at'] | safe}}</td>
+                                        <td>{{Value['resolved_at'] | safe}}</td>
+                                        <td>{{Value['category'] | safe}}</td>
+                                        <td>{{Value['subcategory'] | safe}}</td>
+                                    </tr> 
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            {% elif Value['assignment_group']!="" and Value['assigned_to'] =="" %}                
+                            {% for Value1 in assigned_group %}
+                                {% if Value['assignment_group']['value']== Value1 %}
+                                {% for Value3 in state %}
+                                    {% if Value['incident_state'] == Value3 %}
+                                    {% for Value4 in assigned_to %}
+                                        {% if Value['opened_by']['value'] == Value4 %}
+                                        <tr>                     
+                                            <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                            <td>{{Value['short_description'] | safe}}</td>
+                                            <td>{{Value['priority'] | safe}}</td>
+                                            <td>{{state[Value3] | safe}}</td>
+                                            <td>{{assigned_to[Value4] | safe}}</td>
+                                            <td>{{Value['assigned_to'] | safe}}</td>
+                                            <td>{{assigned_group[Value1] | safe}}</td>
+                                            <td>{{Value['opened_at'] | safe}}</td>
+                                            <td>{{Value['closed_at'] | safe}}</td>
+                                            <td>{{Value['resolved_at'] | safe}}</td>
+                                            <td>{{Value['category'] | safe}}</td>
+                                            <td>{{Value['subcategory'] | safe}}</td>
+                                        </tr> 
+                                        {% endif %}
+                                    {% endfor %} 
+                                    {% endif %}
+                                {% endfor %} 
+                                {% endif %}
+                            {% endfor %}
+                            {% elif Value['assignment_group']=="" and Value['assigned_to']!="" %}                
+                            {% for Value2 in assigned_to %}
+                                {% if Value['assigned_to']['value']== Value2 %}
+                                {% for Value3 in state %}
+                                    {% if Value['incident_state'] == Value3 %}
+                                    {% for Value4 in assigned_to %}
+                                        {% if Value['opened_by']['value'] == Value4 %}
+                                        <tr>                     
+                                            <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                            <td>{{Value['short_description'] | safe}}</td>
+                                            <td>{{Value['priority'] | safe}}</td>
+                                            <td>{{state[Value3] | safe}}</td>
+                                            <td>{{assigned_to[Value4] | safe}}</td>
+                                            <td>{{assigned_to[Value2] | safe}}</td>
+                                            <td>{{Value['assignment_group'] | safe}}</td>
+                                            <td>{{Value['opened_at'] | safe}}</td>
+                                            <td>{{Value['closed_at'] | safe}}</td>
+                                            <td>{{Value['resolved_at'] | safe}}</td>
+                                            <td>{{Value['category'] | safe}}</td>
+                                            <td>{{Value['subcategory'] | safe}}</td>
+                                        </tr>  
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            {% endfor %}                  
+                            {% elif Value['assignment_group']!= "" and Value['assigned_to'] != "" %}
+                            {% for Value1 in assigned_group %}
+                                {% if Value['assignment_group']['value']== Value1 %}
+                                {% for Value2 in assigned_to %}
+                                    {% if Value['assigned_to']['value']== Value2 %}
+                                    {% for Value3 in state %}
+                                        {% if Value['incident_state'] == Value3 %}
+                                        {% for Value4 in assigned_to %}
+                                            {% if Value['opened_by']['value'] == Value4 %}
+                                            <tr>                     
+                                                <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                                <td>{{Value['short_description'] | safe}}</td>
+                                                <td>{{Value['priority'] | safe}}</td>
+                                                <td>{{state[Value3] | safe}}</td>
+                                                <td>{{assigned_to[Value4] | safe}}</td>
+                                                <td>{{assigned_to[Value2] | safe}}</td>
+                                                <td>{{assigned_group[Value1] | safe}}</td>
+                                                <td>{{Value['opened_at'] | safe}}</td>
+                                                <td>{{Value['closed_at'] | safe}}</td>
+                                                <td>{{Value['resolved_at'] | safe}}</td>
+                                                <td>{{Value['category'] | safe}}</td>
+                                                <td>{{Value['subcategory'] | safe}}</td>
+                                            </tr>
+                                            {% endif %}
+                                        {% endfor %}  
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            {% endif %}  
+                        {% endfor %}   
+                        </tbody>
+                    </table>
+                    <div class="table-button text-center"><a href="#" class="btn-main">Export as PDF</a> <a href="#" class="btn-main">Export as CSV</a></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        <!-- </div> -->
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </div> -->
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/canvasjs.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+
+
+
+{% endblock %}
+</body>
+</html>

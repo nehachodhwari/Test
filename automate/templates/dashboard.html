@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+  .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      grid-gap: 20px;
+      background-color: #ccc;
+      padding: 10px;
+    }
+    
+    .grid-container > div {
+      background-color: #A9A9A9;
+      text-align: center;
+      padding: 40px 40px 40px 40px;
+      font-size: 15px;
+    }
+    /* h3 {text-align: center;} */
+</style>
+
+<script>
+
+window.onload = function () {
+
+var chart1 = new CanvasJS.Chart("chartContainer1", {
+  animationEnabled: true,
+  theme: "light2", // "light1", "light2", "dark1", "dark2"
+  title:{
+    text: "Automation Script Success/Fail"
+  },
+  axisY: {
+    title: "Script Count"
+  },
+  data: [{        
+    type: "column",  
+    showInLegend: true, 
+    legendMarkerColor: "grey",
+    dataPoints: [      
+      { y: 1300, label: "Success", color: "green" },
+      { y: 400,  label: "Fail", color: "red" }
+      
+    ]
+  }]
+});
+chart1.render();
+
+}
+</script>
+
+</head>
+<body>
+
+  {% extends "Automate_v1.html" %}
+  
+  {% block content %}
+<div class="container">
+<div class="row">
+  <div class="column" style="background-color:#ccc;">
+   <div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+  </div>
+  <div class="column" style="background-color:#ddd; ">
+  <div class= "col-md-6" style="height: 280px; width: 100%;" ><h3 >Time Saved Using Automation</h3></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column" style="background-color:#ddd;">
+    <div class= "col-md-6" style="height: 280px; width: 100%;" ><h3>Top Usecases Executed (SNOW+Manual)</h3></div>
+  </div>
+
+  <div class="column" style="background-color:#ccc;">
+    <div class= "col-md-6" style="height: 280px; width: 100%;" ><h3 >Quick Links</h3>
+  <div class="grid-container">
+    <div class="item1"><a href="/addlocaluserform">Add Local User</a></div>
+    <div class="item2"><a href="/syncad">Synchronize AD</a></div>
+    <div class="item3"><a href="url">Add Phone</a></div>  <br>
+
+  </div>
+  </div></div>
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/canvasjs.min.js') }}"></script>
+{% endblock %}
+</body>
+</html>

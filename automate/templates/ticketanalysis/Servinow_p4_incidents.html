@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Dashboard</title>
+
+ 
+    <!-- Custom styles for this page -->
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTables.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}" type="text/css">
+
+</head>
+
+<body id="page-top">
+ <!-- Sidebar - Brand -->
+      
+
+<nav class="navbar navbar-expand navbar-light topbar static-top shadow">
+<a class="sidebar-brand align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-text"><img src="{{url_for('static', filename='img/logo-l.png') }}" width="100%" alt=""></div>
+      </a>
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Topbar Search -->
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-2 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <input type="text" class="form-control border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                  <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </li>
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="category.html">
+                Home
+              </a>
+            </li>
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="aboutus.html">
+                About Us
+              </a>
+            </li>
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline">User name</span>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="faq.html">
+                Help
+              </a>
+            </li>
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="contactus.html">
+                Contact Us
+              </a>
+            </li>
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline">Settings</span>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  Manage Users
+                </a>
+                <a class="dropdown-item" href="#">
+                  Role Management
+                </a>
+                <a class="dropdown-item" href="#">
+                  Enable SSO
+                </a>
+                <a class="dropdown-item" href="#">
+                  OEM Selection
+                </a>
+                <a class="dropdown-item" href="#">
+                  ITSM Configuration
+                </a>
+                <a class="dropdown-item" href="#">
+                  Add SFB Details Option
+                </a>
+                <a class="dropdown-item" href="#">
+                  Themes Setting
+                </a>
+              </div>
+            </li>
+            
+
+          </ul>
+
+        </nav>
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
+  <nav id="menu">
+  <ul class="main-menu clearfix">
+  <li><a href="index.html"><strong>Dashboard</strong></a></li>
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+      
+   
+    <li><a href="#">MACD/Provisioning
+        <span class="drop-icon">▾</span>
+        <label title="Toggle Drop-down" class="drop-icon" for="sm1">▾</label>
+      </a>
+      <input type="checkbox" id="sm1">
+      <ul class="sub-menu">
+        <li><a href="form.html">Quick Custom Provision User</a></li>
+		<li><a href="#">Bulk User Provisioning</a></li>
+        <li><a href="#">Unified Communication
+            <span class="drop-icon">▾</span>
+            <label title="Toggle Drop-down" class="drop-icon" for="sm2">▾</label>
+          </a>
+          <input type="checkbox" id="sm2">
+          <ul class="sub-menu">
+            <li><a href="aboutus.html">Cisco Unified CM's</a></li>
+            <li><a href="contact.html">Cisco Unity Connection</a></li>
+            <li><a href="faq.html">Skype For Business</a></li>
+          </ul>
+        </li>
+		<li><a href="#">UCaaS
+            <span class="drop-icon">▾</span>
+            <label title="Toggle Drop-down" class="drop-icon" for="sm3">▾</label>
+          </a>
+          <input type="checkbox" id="sm3">
+          <ul class="sub-menu">
+            <li><a href="aboutus.html">Cisco WebEx Teams</a></li>
+            <li><a href="contact.html">Microsoft Teams</a></li>
+          </ul>
+        </li>
+		<li><a href="#">Gateways
+            <span class="drop-icon">▾</span>
+            <label title="Toggle Drop-down" class="drop-icon" for="sm4">▾</label>
+          </a>
+          <input type="checkbox" id="sm4">
+          <ul class="sub-menu">
+            <li><a href="aboutus.html">Cisco Expressways/Gateways/CUBE</a></li>
+            <li><a href="contact.html">Microsoft Gateways</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+	<li><a href="#">Self Heal</a></li>
+	<li><a href="#">Service Request</a></li>
+	<li><a href="#">Servicenow Tickets</a></li>
+  </ul>
+</nav>
+  </div>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Content Row -->
+
+          <div class="detail-page-main">
+          <div class="row">
+          
+          <div class="col-sm-12">
+          	<div class="server-table-main">
+          	
+          	<div class="right-table">
+            	<div class="table-responsive">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                  <h2 style="text-align: center;">ServiceNow Incidents</h2>
+                  <thead>
+                    <tr>
+                      <th width="10%">Incident Number</th>
+                      <th width="10%">Description</th>            
+                      <th width="5%">Priority</th>
+                      <th width="5%">state</th>
+                      <th width="10%">Opened By</th>
+                      <th width="10%">Assigned to</th>
+                      <th width="10%">Assigned Group</th>
+                      <th width="10%">Opened</th>
+                      <th width="10%">Closed</th>
+                      <th width="10%">Resoloved</th>                     
+                      <th width="10%">Category</th>
+                      <th width="10%">Subcategory</th>
+                      </tr>
+                  </thead>
+                  <!-- <tfoot>
+                    <tr>
+                      <th>Name</th>
+                      <th>Directory Number</th>
+                      <th>Phone</th>
+                      </tr>
+                  </tfoot> -->
+                  <tbody>
+                    {% for Value in Priority_4_incidents %}
+                      {% if Value['assignment_group']=="" and Value['assigned_to']=="" %}
+                        {% for Value3 in state %}
+                          {% if Value['incident_state'] == Value3 %}
+                            {% for Value4 in assigned_to %}
+                              {% if Value['opened_by']['value'] == Value4 %}
+                                <tr>                     
+                                  <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number']  | safe}}</a></td>
+                                  <td>{{Value['short_description'] | safe}}</td>
+                                  <td>{{Value['priority'] | safe}}</td>
+                                  <td>{{state[Value3] | safe}}</td>
+                                  <td>{{assigned_to[Value4] | safe}}</td>
+                                  <td>{{Value['assigned_to'] | safe}}</td>
+                                  <td>{{Value['assignment_group'] | safe}}</td>
+                                  <td>{{Value['opened_at'] | safe}}</td>
+                                  <td>{{Value['closed_at'] | safe}}</td>
+                                  <td>{{Value['resolved_at'] | safe}}</td>
+                                  <td>{{Value['category'] | safe}}</td>
+                                  <td>{{Value['subcategory'] | safe}}</td>
+                                </tr> 
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                        {% endfor %}
+                      {% elif Value['assignment_group']!="" and Value['assigned_to'] =="" %}                
+                        {% for Value1 in assigned_group %}
+                          {% if Value['assignment_group']['value']== Value1 %}
+                            {% for Value3 in state %}
+                              {% if Value['incident_state'] == Value3 %}
+                                {% for Value4 in assigned_to %}
+                                  {% if Value['opened_by']['value'] == Value4 %}
+                                    <tr>                     
+                                      <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number']  | safe}}</a></td>
+                                      <td>{{Value['short_description'] | safe}}</td>
+                                      <td>{{Value['priority'] | safe}}</td>
+                                      <td>{{state[Value3] | safe}}</td>
+                                      <td>{{assigned_to[Value4] | safe}}</td>
+                                      <td>{{Value['assigned_to'] | safe}}</td>
+                                      <td>{{assigned_group[Value1] | safe}}</td>
+                                      <td>{{Value['opened_at'] | safe}}</td>
+                                      <td>{{Value['closed_at'] | safe}}</td>
+                                      <td>{{Value['resolved_at'] | safe}}</td>
+                                      <td>{{Value['category'] | safe}}</td>
+                                      <td>{{Value['subcategory'] | safe}}</td>
+                                    </tr> 
+                                  {% endif %}
+                                {% endfor %} 
+                              {% endif %}
+                            {% endfor %} 
+                          {% endif %}
+                        {% endfor %}
+                      {% elif Value['assignment_group']=="" and Value['assigned_to']!="" %}                
+                        {% for Value2 in assigned_to %}
+                          {% if Value['assigned_to']['value']== Value2 %}
+                            {% for Value3 in state %}
+                              {% if Value['incident_state'] == Value3 %}
+                                {% for Value4 in assigned_to %}
+                                  {% if Value['opened_by']['value'] == Value4 %}
+                                    <tr>                     
+                                      <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                      <td>{{Value['short_description'] | safe}}</td>
+                                      <td>{{Value['priority'] | safe}}</td>
+                                      <td>{{state[Value3] | safe}}</td>
+                                      <td>{{assigned_to[Value4] | safe}}</td>
+                                      <td>{{assigned_to[Value2] | safe}}</td>
+                                      <td>{{Value['assignment_group'] | safe}}</td>
+                                      <td>{{Value['opened_at'] | safe}}</td>
+                                      <td>{{Value['closed_at'] | safe}}</td>
+                                      <td>{{Value['resolved_at'] | safe}}</td>
+                                      <td>{{Value['category'] | safe}}</td>
+                                      <td>{{Value['subcategory'] | safe}}</td>
+                                    </tr>  
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                        {% endfor %}                  
+                      {% elif Value['assignment_group']!= "" and Value['assigned_to'] != "" %}
+                        {% for Value1 in assigned_group %}
+                          {% if Value['assignment_group']['value']== Value1 %}
+                            {% for Value2 in assigned_to %}
+                              {% if Value['assigned_to']['value']== Value2 %}
+                                {% for Value3 in state %}
+                                  {% if Value['incident_state'] == Value3 %}
+                                    {% for Value4 in assigned_to %}
+                                      {% if Value['opened_by']['value'] == Value4 %}
+                                        <tr>                     
+                                          <td><a href="/getincidentnotes/{{Value['sys_id']}}">{{Value['number'] | safe}}</a></td>
+                                          <td>{{Value['short_description'] | safe}}</td>
+                                          <td>{{Value['priority'] | safe}}</td>
+                                          <td>{{state[Value3] | safe}}</td>
+                                          <td>{{assigned_to[Value4] | safe}}</td>
+                                          <td>{{assigned_to[Value2] | safe}}</td>
+                                          <td>{{assigned_group[Value1] | safe}}</td>
+                                          <td>{{Value['opened_at'] | safe}}</td>
+                                          <td>{{Value['closed_at'] | safe}}</td>
+                                          <td>{{Value['resolved_at'] | safe}}</td>
+                                          <td>{{Value['category'] | safe}}</td>
+                                          <td>{{Value['subcategory'] | safe}}</td>
+                                        </tr>
+                                      {% endif %}
+                                    {% endfor %}  
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}  
+                    {% endfor %}   
+                                  
+                    </tbody>
+                </table>
+                <div class="table-button text-center"><a href="#" class="btn-main">Export as PDF</a> <a href="#" class="btn-main">Export as CSV</a></div>
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>
+          	
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+  
+  <!-- Footer -->
+      <footer class="sticky-footer">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; 2020 HCL. All rights reserved.</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/admin.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dataTables.bootstrap4.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/datatables-demo.js') }}"></script>
+  
+
+
+</body>
+
+</html>

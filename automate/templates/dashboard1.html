@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--<link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/font-awesome.min.css') }}">-->
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+  .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      grid-gap: 20px;
+      background-color: white;
+      padding: 10px;
+    }
+
+    .grid-container > div {
+      background-color: #A9A9A9;
+      text-align: center;
+      padding: 40px 40px 40px 40px;
+      font-size: 15px;
+    }
+    /* h3 {text-align: center;} */
+</style>
+
+<script>
+window.addEventListener('load', function() {
+  console.log('First listener');
+   $.ajax({
+       url: "/audit/audit_plot",
+       data: {
+
+       },
+       type: 'GET',
+       complete: Test
+    });
+    function Test(data, status) {
+            var output = JSON.parse(data.responseText);
+            GetKHIDashboardDetails(output);
+    }
+    function GetKHIDashboardDetails(values) {
+            new Chart(document.getElementById("chartContainer"), {
+                 type: 'pie',
+              data: {
+                      labels: ["Success", "Failure"],
+                      datasets: [{
+                      data: [values['pass'], values['fail']],
+                      backgroundColor: ["#1cc88a", "#e74a3b"],
+                      hoverBackgroundColor: ["#1cc88a", "#e74a3b"]
+                      }]
+              },
+              options: {
+                  responsive: true
+              }
+            });
+        }
+});
+window.addEventListener('load', function() {
+  console.log('First listener');
+   $.ajax({
+       url: "/audit/top_case",
+       data: {
+
+       },
+       type: 'GET',
+       complete: Test
+    });
+    function Test(data, status) {
+            var output = JSON.parse(data.responseText);
+            GetKHIDashboardDetails(output);
+    }
+    function GetKHIDashboardDetails(values) {
+    var object = values
+    on = Object.keys(object)
+            new Chart(document.getElementById("chartContainer1"), {
+                type: 'bar',
+                data: {
+                    labels: ["Top 5 Use Case Executed"],
+                    datasets: [
+                    {
+                        label: on[0],
+                        backgroundColor: "#59ADD0",
+                        data: [object[on[0]]],
+                        fill: false
+                    },
+                    {
+                        label: on[1],
+                        backgroundColor: "#51C0BF",
+                        data: [object[on[1]]],
+                        fill: false
+                    },
+                    {
+                        label: on[2],
+                        backgroundColor: "#7095E1",
+                        data: [object[on[2]]],
+                        fill: false
+                    },
+                    {
+                        label: on[3],
+                        backgroundColor: "#96B1D0",
+                        data: [object[on[3]]],
+                        fill: false
+                    },
+                    {
+                        label: on[4],
+                        backgroundColor: "#4C92B1",
+                        data: [object[on[4]]],
+                        fill: false
+                    },
+                    ]
+                },
+                options: {
+                scales: {
+                    yAxes: [{
+                            display: true,
+                            ticks: {
+                                beginAtZero: true,
+                                steps: 10,
+                                stepValue: 5
+                            }
+                        }],
+                        xAxes:[{// Change here
+                         barPercentage:0.5}]
+                },
+                    title: {
+                        display: true,
+                        text: ''
+                    }
+                }
+            });
+        }
+});
+window.addEventListener('load', function() {
+new Chart(document.getElementById("chartContainer2"), {
+                type: 'doughnut',
+                data: {
+                    labels: ["Time Saved"],
+                    datasets: [
+                        {
+                            label: "Population (millions)",
+                            backgroundColor: "#5DBB63",
+                            data: [{{ data }}]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    cutoutPercentage: 70,
+                    percentageInnerCutout: 60,
+                    title: {
+                        display: true,
+                        text: 'Time Saved'
+                    },
+                    rotation: 1 * Math.PI,
+                    circumference: 2 * Math.PI,
+                    title: {
+                       display: true,
+                       text: 'Custom Chart Title',
+                       position: 'center'
+                    }
+                }
+                });
+});
+</script>
+
+</head>
+<body>
+
+  {% extends "Automate_v2.html" %}
+  {% block content %}
+  <style>
+    .donut-inner {
+   margin-top: -116px;
+   margin-bottom: 100px;
+   margin-left: 198px
+}
+.donut-inner h5 {
+   margin-bottom: 5px;
+   margin-top: 0;
+   margin-left: -10px;
+}
+  </style>
+<div class="container">
+<div class="row">
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Top 5 Use Cases Executed</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area">
+          <canvas id="chartContainer1"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Time Saved During Automation</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area">
+          <canvas id="chartContainer2"></canvas>
+            <div class="donut-inner">
+                <h5>{{ data }} Hours</h5>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 col-lg-6">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Scripts Execution Monitor</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Dropdown Header:</div>
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area">
+<!--          <canvas id="chartContainer" style="border: 1px solid #000000;"></canvas>-->
+          <canvas id="chartContainer"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="column">
+    <div class= "col-md-6" style="height: 280px; width: 100%;" ><h6 class="m-0 font-weight-bold text-primary">Quick Links</h6>
+  <div class="grid-container">
+    <ul>
+      <li><a href="{{ url_for('quick.quick_custom_provision') }}">Quick Custom Provision User</a></li>
+      <li><a href="{{ url_for('deprovision.deprovision_user') }}">Deprovision User</a></li>
+      <li><a href="{{ url_for('macdcucm.add_phone_cucm') }}">Add Phone</a></li>
+      <li><a href="{{ url_for('create.cucm_add_user') }}">Add Local User</a></li>
+      <li><a href="{{ url_for('unityconn.reset_voice_mail_pin') }}">Reset Voice Mail Pin</a></li>
+    </ul>
+
+  </div>
+  </div>
+  </div>
+</div>
+</div>
+  <script src="{{ url_for('static', filename='js/canvasjs.min.js') }}"></script>
+{% endblock %}
+</body>
+</html>
